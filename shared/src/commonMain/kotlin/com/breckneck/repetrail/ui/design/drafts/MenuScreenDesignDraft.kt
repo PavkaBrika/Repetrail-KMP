@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,10 +20,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.breckneck.core.ui.designsystem.theme.RepetrailTheme
 import com.breckneck.repetrail.ui.components.BrandMark
 import com.breckneck.repetrail.ui.components.PageHeading
-import com.breckneck.repetrail.ui.theme.AppInk
-import com.breckneck.repetrail.ui.theme.AppMint
 
 /** Original, styled menu retained while the active tab is a placeholder. */
 @Composable
@@ -35,20 +33,24 @@ internal fun MenuScreenDesignDraft() {
             title = "Меню",
             subtitle = "Настрой приложение под свой ритм обучения.",
         )
-        Surface(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(26.dp), color = AppInk) {
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RepetrailTheme.shapes.card,
+            color = RepetrailTheme.colors.ink,
+        ) {
             Row(modifier = Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier.size(54.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.12f)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    BrandMark(tint = AppMint, modifier = Modifier.size(24.dp))
+                    BrandMark(tint = RepetrailTheme.colors.mint, modifier = Modifier.size(24.dp))
                 }
                 Column(modifier = Modifier.weight(1f).padding(start = 14.dp)) {
-                    Text("Твой профиль", color = Color.White, fontSize = 16.sp)
+                    Text("Твой профиль", color = Color.White, style = RepetrailTheme.typography.titleMedium)
                     Spacer(Modifier.height(4.dp))
-                    Text("Персональные настройки", color = Color.White.copy(alpha = 0.65f), fontSize = 12.sp)
+                    Text("Персональные настройки", color = Color.White.copy(alpha = 0.65f), style = RepetrailTheme.typography.bodySmall)
                 }
-                Text("→", color = AppMint, fontSize = 20.sp)
+                Text("→", color = RepetrailTheme.colors.mint, fontSize = 20.sp)
             }
         }
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {

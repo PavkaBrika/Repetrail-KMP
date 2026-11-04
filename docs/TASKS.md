@@ -9,8 +9,11 @@
   - `[x]` `DimensionTokens.kt`
   - `[x]` `ShapeTokens.kt`
   - `[x]` `RepetrailTheme.kt`
-- `[ ]` Step 3: Project Integration & Refactoring
-  - `[ ]` Add `:core:ui:designsystem` dependency to `shared/build.gradle.kts`
-  - `[ ]` Update shared `RepetrailTheme.kt`
-  - `[ ]` Refactor existing UI components & screens
-- `[ ]` Step 4: Verification & Build Check
+- `[x]` Step 3: Project Integration & Refactoring
+  - `[x]` Add `:core:ui:designsystem` dependency to `shared/build.gradle.kts`
+  - `[x]` Update shared `RepetrailTheme.kt`
+  - `[x]` Refactor existing UI components & screens
+- `[x]` Step 4: Verification & Build Check
+  - `[x]` `./gradlew :core:ui:designsystem:build`
+  - `[x]` `./gradlew :androidApp:assembleDebug`
+  - `[x]` `./gradlew :shared:allTests`

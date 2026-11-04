@@ -1,6 +1,5 @@
 package com.breckneck.repetrail.ui.navigation
 
-import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -10,27 +9,27 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.breckneck.core.ui.designsystem.theme.RepetrailTheme
 import com.breckneck.repetrail.ui.components.FloatingNavigationBar
 import com.breckneck.repetrail.ui.screens.cards.CardsScreen
 import com.breckneck.repetrail.ui.screens.menu.MenuScreen
 import com.breckneck.repetrail.ui.screens.tasks.TasksScreen
-import com.breckneck.repetrail.ui.theme.AppBackground
-import com.breckneck.repetrail.ui.theme.RepetrailTheme
 
 @Composable
 fun MainMenuScreen() {
     RepetrailTheme {
         var selectedTab by remember { mutableStateOf(MainTab.Tasks) }
 
-        Surface(modifier = Modifier.fillMaxSize(), color = AppBackground) {
+        Surface(modifier = Modifier.fillMaxSize(), color = RepetrailTheme.colors.background) {
             Box(modifier = Modifier.fillMaxSize()) {
                 Box(
                     modifier = Modifier
