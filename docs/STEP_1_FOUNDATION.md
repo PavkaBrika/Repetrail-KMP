@@ -17,13 +17,37 @@
 ### 1.1. Подготовить зависимости и проверить совместимость
 
 - [ ] Зафиксировать исходное состояние: Android собирается, iOS-приложение запускается.
-- [ ] Добавить в version catalog Koin, Voyager, Room, SQLite Bundled, KSP и coroutines.
-- [ ] Для Voyager подключить navigator, tab navigator и lifecycle KMP одной версии.
+- [x] Добавить в version catalog Koin, Voyager, Room, SQLite Bundled, KSP и coroutines.
+- [x] Для Voyager подключить navigator, tab navigator и lifecycle KMP одной версии.
 - [ ] Проверить совместимость выбранных версий с текущими Kotlin `2.4.21`, AGP `9.1.1` и Compose Multiplatform `1.12.2`.
-- [ ] Зафиксировать конкретные версии без динамических диапазонов; экспериментальность Voyager lifecycle отметить в документе.
+- [x] Зафиксировать конкретные версии без динамических диапазонов; экспериментальность Voyager lifecycle отметить в документе.
 - [ ] Проверить разрешение зависимостей для Android, `iosArm64` и `iosSimulatorArm64`.
 
 **Готово, когда:** зависимости разрешаются на всех существующих таргетах без изменения выбранного стека.
+
+#### Результат реализации 1.1
+
+Зависимости подготовлены для ревью; проверки совместимости и разрешения зависимостей остаются открытыми. По просьбе пользователя дальнейшие сборки и запуски приложений пропущены.
+
+| Компонент | Зафиксированная версия |
+|---|---|
+| Koin (core, Android, Compose, Compose ViewModel) | `4.2.2` |
+| Voyager (navigator, tab navigator, lifecycle KMP) | `2.2.21-1.10.3` |
+| Room (runtime, compiler, Gradle plugin) | `2.8.5` |
+| SQLite Bundled | `2.7.1` |
+| KSP | `2.3.13` |
+| Coroutines (core, test) | `1.11.0` |
+
+Версии получены через Android Studio `studio_version_lookup`. Kotlin `2.4.21`, AGP `9.1.1` и Compose Multiplatform `1.12.2` сохранены. Наличие версии в lookup не подтверждает совместимость всего графа: она требует Gradle resolution и компиляции, которые пока не выполнялись после изменений.
+
+Koin, Voyager и coroutines подключены к `shared/commonMain`. Room, SQLite, Koin Android и coroutines test пока объявлены в каталоге для подключения в соответствующих этапах. Плагины Room и KSP объявлены в корневом build script с `apply false`; применение к `core:data` и KSP-конфигурации таргетов относятся к 1.3.
+
+Поддержка AndroidX KMP ViewModel в Voyager **экспериментальная**: [документация Voyager](https://voyager.adriel.cafe/android-viewmodel/viewmodel-kmp/) требует `ProvideNavigatorLifecycleKMPSupport` над навигаторами. Подключение provider и проверка lifecycle запланированы в 1.6.
+
+Фактически выполненные проверки до изменения зависимостей:
+- `git status --short` — рабочее дерево чистое.
+- `:androidApp:assembleDebug` через `studio_gradle_build` — успешно.
+- Запуск iOS не подтверждён; сборки, Gradle sync и проверка разрешения зависимостей после изменений пропущены по просьбе пользователя.
 
 ### 1.2. Создать core-модули
 
