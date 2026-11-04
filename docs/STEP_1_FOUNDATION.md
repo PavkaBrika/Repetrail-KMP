@@ -77,10 +77,10 @@ Koin, Voyager и coroutines подключены к `shared/commonMain`. Room, S
 
 ### 1.3. Настроить Room KMP
 
-- [ ] В `core:data` подключить Room runtime, compiler через KSP и Bundled SQLite.
-- [ ] Настроить KSP отдельно для Android и обоих iOS-таргетов.
-- [ ] Создать `RepetrailDatabase`, версия схемы — `1`.
-- [ ] Настроить генерацию конструктора БД через `RoomDatabaseConstructor`.
+- [x] В `core:data` подключить Room runtime, compiler через KSP и Bundled SQLite.
+- [x] Настроить KSP отдельно для Android и обоих iOS-таргетов.
+- [x] Создать `RepetrailDatabase`, версия схемы — `1`.
+- [x] Настроить генерацию конструктора БД через `RoomDatabaseConstructor`.
 - [ ] Включить экспорт схем и хранение JSON-схем в Git.
 
 Схема первой версии:
@@ -90,19 +90,31 @@ Koin, Voyager и coroutines подключены к `shared/commonMain`. Room, S
 | `DeckEntity` | `id: Long`, `name: String`, `description: String?`, `createdAt: Long`, `updatedAt: Long` |
 | `FlashcardEntity` | `id: Long`, `deckId: Long`, `term: String`, `definition: String`, `example: String?`, `createdAt: Long` |
 
-- [ ] Для обеих таблиц использовать автоматически генерируемый первичный ключ.
-- [ ] Добавить внешний ключ `Flashcard.deckId → Deck.id`, индекс по `deckId` и каскадное удаление карточек.
-- [ ] Хранить timestamps в миллисекундах Unix.
-- [ ] Создать минимальные DAO: вставка, чтение по ID, наблюдение списка через `Flow`, удаление.
-- [ ] Реализовать Android builder с application context и постоянным путём БД.
-- [ ] Реализовать iOS builder с постоянным путём внутри sandbox приложения.
-- [ ] Общую конфигурацию выполнять в `commonMain`: Bundled SQLite и coroutine context для запросов. Основа — [официальная схема настройки Room KMP](https://developer.android.com/kotlin/multiplatform/room).
-- [ ] Не заполнять пользовательскую БД тестовыми данными при запуске.
-- [ ] Не включать destructive migration.
+- [x] Для обеих таблиц использовать автоматически генерируемый первичный ключ.
+- [x] Добавить внешний ключ `Flashcard.deckId → Deck.id`, индекс по `deckId` и каскадное удаление карточек.
+- [x] Хранить timestamps в миллисекундах Unix.
+- [x] Создать минимальные DAO: вставка, чтение по ID, наблюдение списка через `Flow`, удаление.
+- [x] Реализовать Android builder с application context и постоянным путём БД.
+- [x] Реализовать iOS builder с постоянным путём внутри sandbox приложения.
+- [x] Общую конфигурацию выполнять в `commonMain`: Bundled SQLite и coroutine context для запросов. Основа — [официальная схема настройки Room KMP](https://developer.android.com/kotlin/multiplatform/room).
+- [x] Не заполнять пользовательскую БД тестовыми данными при запуске.
+- [x] Не включать destructive migration.
 
 **Готово, когда:** на Android и iOS можно записать колоду с карточкой и прочитать их после закрытия и повторного открытия БД.
 
 **Миграции:** предыдущей схемы пока нет. На шаге 1 создаём и сохраняем v1; реальную миграцию добавляем при первом изменении схемы, без искусственной версии v2.
+
+#### Результат реализации 1.3
+
+В `core:data` подключены Room runtime, SQLite Bundled и coroutines, плагины Room/KSP. Компилятор Room подключён к `kspAndroid`, `kspIosArm64`, `kspIosSimulatorArm64`. Runtime и coroutines объявлены через `api`, поскольку Room builder, базовый класс БД, Flow и CoroutineDispatcher входят в публичные сигнатуры.
+
+Добавлены таблицы `decks` и `flashcards` с автоматически генерируемыми Long ID. Связь по `deckId` индексирована, удаление колоды каскадно удаляет её карточки. Вставка использует стандартный ABORT при конфликте. DAO предоставляют вставку с возвратом ID, чтение по ID, Flow списка (карточки — по колоде) и удаление по ID. Сортировка включает ID для стабильного порядка при одинаковых timestamps.
+
+`RepetrailDatabase` имеет версию 1 и `exportSchema = true`; actual-конструктор генерирует Room. Android builder использует application context и `getDatabasePath("repetrail.db")`. iOS builder использует Documents внутри sandbox приложения. Общая фабрика принимает `CoroutineDispatcher` напрямую, настраивает Bundled SQLite и query coroutine context. Демо-данные и destructive migrations не добавлены.
+
+Экспорт схем настроен в `core/data/schemas`. **JSON v1 пока не сгенерирован**: он требует запуска KSP, а сборки пропущены по просьбе пользователя. В каталоге схем добавлен README с ожидаемым расположением файла; пункт хранения JSON намеренно оставлен открытым.
+
+Проверки: `git diff --check` — без ошибок. Компиляция, KSP и проверки записи/чтения, переоткрытия, внешнего ключа и каскадного удаления не выполнялись. IDE пока сообщает unresolved references для новых зависимостей: после изменения Gradle конфигурации sync не запускался. Регистрация БД и DAO и запуск приложения с ними относятся к 1.4.
 
 ### 1.4. Собрать DI-граф
 
