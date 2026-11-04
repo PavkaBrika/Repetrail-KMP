@@ -3,6 +3,11 @@ package com.breckneck.repetrail.ui.screens.menu
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,11 +21,17 @@ import com.breckneck.core.ui.designsystem.theme.RepetrailTheme
 import com.breckneck.repetrail.ui.components.PageHeading
 
 @Composable
-internal fun MenuScreen() {
+internal fun MenuScreen(onAboutClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(22.dp),
+            .verticalScroll(rememberScrollState())
+            .padding(
+                start = 22.dp,
+                top = 22.dp,
+                end = 22.dp,
+                bottom = 112.dp + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+            ),
         verticalArrangement = Arrangement.spacedBy(22.dp),
     ) {
         PageHeading(
@@ -47,6 +58,20 @@ internal fun MenuScreen() {
                     style = RepetrailTheme.typography.bodyMedium,
                 )
             }
+        }
+        Surface(
+            onClick = onAboutClick,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RepetrailTheme.shapes.card,
+            color = RepetrailTheme.colors.surface,
+            shadowElevation = RepetrailTheme.dimensions.elevations.card,
+        ) {
+            Text(
+                text = "О приложении",
+                modifier = Modifier.padding(20.dp),
+                color = RepetrailTheme.colors.accent,
+                style = RepetrailTheme.typography.titleMedium,
+            )
         }
     }
 }
