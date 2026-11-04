@@ -30,3 +30,4 @@ dependencyResolutionManagement {
 include(":androidApp")
 include(":shared")
 include(":feature:add_card")
+include(":core:ui:designsystem")
