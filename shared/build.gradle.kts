@@ -38,6 +38,7 @@ kotlin {
     }
     sourceSets {
         androidMain.dependencies {
+            implementation(libs.koin.android)
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
         }
@@ -54,7 +55,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(libs.koin.core)
+            api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.voyager.navigator)
@@ -64,8 +65,10 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
         }
         getByName("androidDeviceTest").dependencies {
+            implementation(libs.kotlin.testJunit)
             implementation(libs.androidx.testRunner)
         }
     }

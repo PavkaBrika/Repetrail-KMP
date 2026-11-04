@@ -81,7 +81,7 @@ Koin, Voyager и coroutines подключены к `shared/commonMain`. Room, S
 - [x] Настроить KSP отдельно для Android и обоих iOS-таргетов.
 - [x] Создать `RepetrailDatabase`, версия схемы — `1`.
 - [x] Настроить генерацию конструктора БД через `RoomDatabaseConstructor`.
-- [ ] Включить экспорт схем и хранение JSON-схем в Git.
+- [x] Включить экспорт схем и хранение JSON-схем в Git.
 
 Схема первой версии:
 
@@ -112,22 +112,38 @@ Koin, Voyager и coroutines подключены к `shared/commonMain`. Room, S
 
 `RepetrailDatabase` имеет версию 1 и `exportSchema = true`; actual-конструктор генерирует Room. Android builder использует application context и `getDatabasePath("repetrail.db")`. iOS builder использует Documents внутри sandbox приложения. Общая фабрика принимает `CoroutineDispatcher` напрямую, настраивает Bundled SQLite и query coroutine context. Демо-данные и destructive migrations не добавлены.
 
-Экспорт схем настроен в `core/data/schemas`. **JSON v1 пока не сгенерирован**: он требует запуска KSP, а сборки пропущены по просьбе пользователя. В каталоге схем добавлен README с ожидаемым расположением файла; пункт хранения JSON намеренно оставлен открытым.
+Экспорт схем настроен в `core/data/schemas`. После сборки пользователем появился `com.breckneck.core.data.local.RepetrailDatabase/1.json`: проверены таблицы, autoGenerate ID, nullable-поля, индекс по deckId и CASCADE. Схема добавлена в Git.
 
 Проверки: `git diff --check` — без ошибок. Компиляция, KSP и проверки записи/чтения, переоткрытия, внешнего ключа и каскадного удаления не выполнялись. IDE пока сообщает unresolved references для новых зависимостей: после изменения Gradle конфигурации sync не запускался. Регистрация БД и DAO и запуск приложения с ними относятся к 1.4.
 
 ### 1.4. Собрать DI-граф
 
-- [ ] Создать общий `initKoin` в `shared`, принимающий платформенную конфигурацию.
-- [ ] Разделить регистрацию на common-, data- и platform-модули.
-- [ ] Зарегистрировать источник времени, database builder, singleton БД и DAO. Нужный `CoroutineDispatcher` передавать напрямую без `AppDispatchers`.
-- [ ] Запускать Koin на Android из `Application` до создания UI.
-- [ ] Инициализировать Koin на iOS до создания общего Compose UI.
-- [ ] Исключить повторную инициализацию при пересоздании Activity или UIViewController.
-- [ ] Сохранить работу previews без запуска production DI-графа.
+- [x] Создать общий `initKoin` в `shared`, принимающий платформенную конфигурацию.
+- [x] Разделить регистрацию на common-, data- и platform-модули.
+- [x] Зарегистрировать источник времени, database builder, singleton БД и DAO. Нужный `CoroutineDispatcher` передавать напрямую без `AppDispatchers`.
+- [x] Запускать Koin на Android из `Application` до создания UI.
+- [x] Инициализировать Koin на iOS до создания общего Compose UI.
+- [x] Исключить повторную инициализацию при пересоздании Activity или UIViewController.
+- [x] Сохранить работу previews без запуска production DI-графа.
 - [ ] Проверить реальное получение БД и DAO из контейнера на обеих платформах: одного успешного `startKoin` недостаточно.
 
 **Готово, когда:** весь зарегистрированный граф разрешается без ошибок, БД создаётся один раз на контейнер.
+
+#### Результат реализации 1.4
+
+Композиция DI-графа находится в `shared/di`: `commonModule` регистрирует `TimeProvider`, `dataModule` — singleton БД и обоих DAO, платформенные модули — Room builder. `core:data` не зависит от Koin. `Dispatchers.IO` передаётся общей фабрике БД напрямую. При закрытии Koin-контейнера БД закрывается через `onClose`.
+
+Общий `initKoin(platformConfiguration)` принимает конфигурацию платформы. Koin core объявлен через `api`, поскольку типы Koin присутствуют в публичном контракте инициализатора. Koin Android подключён только в `androidMain`.
+
+На Android `RepetrailApplication.onCreate` вызывает `initKoinAndroid` с application context; Application зарегистрирован в manifest. Activity не инициализирует DI повторно. На iOS `MainViewController` вызывает `initKoinIos` до создания ComposeUIViewController. Инициализация защищена `lazy`: повторное создание UIViewController использует уже запущенный контейнер.
+
+Compose-экраны и Android preview не запускают production DI. Регистрации ленивые: создание контейнера не открывает БД на главном потоке.
+
+Добавлены `FoundationGraphAndroidTest` (instrumentation) и `FoundationGraphIosTest` с общей проверкой графа. Тесты используют локальный `koinApplication`, получают production platform builder, затем подменяют builder на in-memory перед созданием БД. Проверяются получение источника времени, builder, singleton БД и DAO, а также реальные запросы через оба DAO; production БД при этом не открывается. Тесты закрывают контейнер в `finally`.
+
+Проверка `git diff --check` прошла. Сборки, Gradle sync, запуск тестов и приложений пропущены по просьбе пользователя. Пункт проверки реального разрешения на обеих платформах остаётся открытым до запуска тестов; успешность запуска и lifecycle не подтверждены выполнением.
+
+Пользователь обновил Gradle wrapper до `9.8.2`; properties, wrapper JAR и скрипты сохранены вместе с изменениями 1.4. IDE сообщила об успешной задаче обновления wrapper. Это не подтверждает запуск приложений или тестов.
 
 ### 1.5. Перевести табы на Voyager
 
