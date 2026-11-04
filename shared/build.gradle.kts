@@ -43,6 +43,9 @@ kotlin {
         }
         commonMain.dependencies {
             api(project(":core:ui:designsystem"))
+            implementation(project(":core:common"))
+            implementation(project(":core:domain"))
+            implementation(project(":core:data"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
