@@ -9,7 +9,7 @@
 С учётом уточнений:
 - В Room сразу создаём **Deck + Flashcard** со связью между ними.
 - Пользовательский CRUD, репозитории и use cases остаются шагам 2–3.
-- Используем **AndroidX KMP ViewModel** и экспериментальную поддержку lifecycle в Voyager.
+- Используем **Voyager ScreenModel** для MVI и штатную интеграцию с Koin; экспериментальный AndroidX KMP lifecycle bridge удалён.
 - MVI описываем как соглашение с примером, без обязательного базового класса.
 
 ## Task list
@@ -18,9 +18,9 @@
 
 - [ ] Зафиксировать исходное состояние: Android собирается, iOS-приложение запускается.
 - [x] Добавить в version catalog Koin, Voyager, Room, SQLite Bundled, KSP и coroutines.
-- [x] Для Voyager подключить navigator, tab navigator и lifecycle KMP одной версии.
+- [x] Для Voyager подключить navigator, tab navigator, screenmodel и koin одной версии.
 - [ ] Проверить совместимость выбранных версий с текущими Kotlin `2.4.21`, AGP `9.1.1` и Compose Multiplatform `1.12.2`.
-- [x] Зафиксировать конкретные версии без динамических диапазонов; экспериментальность Voyager lifecycle отметить в документе.
+- [x] Зафиксировать конкретные версии без динамических диапазонов; выбрать ScreenModel без экспериментального lifecycle bridge.
 - [ ] Проверить разрешение зависимостей для Android, `iosArm64` и `iosSimulatorArm64`.
 
 **Готово, когда:** зависимости разрешаются на всех существующих таргетах без изменения выбранного стека.
@@ -31,8 +31,8 @@
 
 | Компонент | Зафиксированная версия |
 |---|---|
-| Koin (core, Android, Compose, Compose ViewModel) | `4.2.2` |
-| Voyager (navigator, tab navigator, lifecycle KMP) | `2.2.21-1.10.3` |
+| Koin (core, Android, Compose) | `4.2.2` |
+| Voyager (navigator, tab navigator, screenmodel, koin) | `2.2.21-1.10.3` |
 | Room (runtime, compiler, Gradle plugin) | `2.8.5` |
 | SQLite Bundled | `2.7.1` |
 | KSP | `2.3.13` |
@@ -42,7 +42,7 @@
 
 Koin, Voyager и coroutines подключены к `shared/commonMain`. Room, SQLite, Koin Android и coroutines test пока объявлены в каталоге для подключения в соответствующих этапах. Плагины Room и KSP объявлены в корневом build script с `apply false`; применение к `core:data` и KSP-конфигурации таргетов относятся к 1.3.
 
-Поддержка AndroidX KMP ViewModel в Voyager **экспериментальная**: [документация Voyager](https://voyager.adriel.cafe/android-viewmodel/viewmodel-kmp/) требует `ProvideNavigatorLifecycleKMPSupport` над навигаторами. Подключение provider и проверка lifecycle запланированы в 1.6.
+Выбран штатный [Voyager ScreenModel](https://voyager.adriel.cafe/screenmodel/) с `screenModelScope` и [интеграцией Koin](https://voyager.adriel.cafe/screenmodel/koin-integration/). Экспериментальная интеграция AndroidX KMP ViewModel больше не используется.
 
 Фактически выполненные проверки до изменения зависимостей:
 - `git status --short` — рабочее дерево чистое.
@@ -180,22 +180,22 @@ IDE inspections изменённых файлов не выявили ошибо
 
 Пользователь подтвердил работу навигации на Android и iOS. Это ручная проверка пользователя; поворот экрана и отдельные сценарии состояния не считаются автоматически проверенными.
 
-Lifecycle KMP provider и проверка времени жизни ViewModel относятся к 1.6.
+Соглашение MVI и время жизни ScreenModel описаны в 1.6.
 
-### 1.6. Зафиксировать MVI и lifecycle ViewModel
+### 1.6. Зафиксировать MVI и lifecycle ScreenModel
 
-- [x] Описать контракт фичи: immutable `State`, `Intent`, `SideEffect`, `ViewModel`.
-- [x] Зафиксировать интерфейс ViewModel: `StateFlow<State>`, `Flow<SideEffect>`, `onIntent(intent)`.
+- [x] Описать контракт фичи: immutable `State`, `Intent`, `SideEffect`, `ScreenModel`.
+- [x] Зафиксировать интерфейс модели: `StateFlow<State>`, `Flow<SideEffect>`, `onIntent(intent)`.
 - [x] Использовать приватный `MutableStateFlow` и публичный read-only state.
-- [x] Для одноразовых эффектов использовать `Channel` с получением через `receiveAsFlow`; эффекты не хранить в State.
-- [x] Зафиксировать: UI передаёт intents, ViewModel выполняет операции в `viewModelScope`, UI обрабатывает навигационные эффекты.
-- [x] Описать обработку загрузки, ошибки и повторной попытки; отмену корутин не превращать в пользовательскую ошибку.
-- [x] Привязать ViewModel к экрану Voyager, а не к singleton приложения.
-- [x] Подключить lifecycle KMP provider над навигаторами согласно [документации Voyager](https://voyager.adriel.cafe/android-viewmodel/viewmodel-kmp/).
-- [x] Добавить пример контракта и получения ViewModel через Koin в этот документ.
-- [ ] Проверку lifecycle ViewModel (recomposition, переключение табов, окончательный pop и отмена корутин) отложить по просьбе пользователя; harness удалён.
+- [x] Для эффектов использовать `Channel` с `receiveAsFlow`; не хранить их в State.
+- [x] Зафиксировать: UI передаёт intents, модель выполняет операции в `screenModelScope`, UI обрабатывает навигационные эффекты.
+- [x] Описать загрузку, ошибку и Retry; отмену корутин не превращать в пользовательскую ошибку.
+- [x] Получать модель через `koinScreenModel()` внутри `Screen.Content()`; регистрировать в Koin как factory.
+- [x] Использовать `voyager-screenmodel` и `voyager-koin` одной версии с navigator и tab navigator.
+- [x] Удалить экспериментальный lifecycle provider, opt-in и прямые зависимости для AndroidX ViewModel.
+- [ ] Проверку lifecycle модели при recomposition, переключении табов и окончательном pop отложить по просьбе пользователя; тесты не добавлять.
 
-**Готово, когда:** следующую фичу можно реализовать по документированному образцу без выбора нового архитектурного подхода.
+**Готово, когда:** следующую фичу можно реализовать по документированному образцу.
 
 #### Соглашение MVI
 
@@ -203,22 +203,33 @@ Lifecycle KMP provider и проверка времени жизни ViewModel �
 
 | Часть | Контракт |
 |---|---|
-| State | immutable data class, все поля val; данные для отображения, загрузка, ошибка |
-| Intent | sealed interface пользовательских действий: загрузить, повторить, сохранить и т. п. |
+| State | immutable data class; все поля val; данные для UI, загрузка, ошибка |
+| Intent | sealed interface пользовательских действий |
 | SideEffect | sealed interface одноразовых команд UI: навигация, snackbar |
-| ViewModel | AndroidX KMP ViewModel с `StateFlow<State>`, `Flow<SideEffect>`, `onIntent(intent)` |
+| ScreenModel | Voyager ScreenModel с StateFlow<State>, Flow<SideEffect> и onIntent(intent) |
 
-ViewModel владеет приватным `MutableStateFlow`, наружу отдаёт `asStateFlow()`. Коллекции внутри State также не должны изменяться на месте. UI рисует State и передаёт Intent, операции выполняются в `viewModelScope`. Диспетчер для блокирующей работы передаётся напрямую через конструктор либо переключение контекста выполняет нижележащий слой. Навигацией управляет UI, ViewModel не хранит Navigator, Context или Composable.
+Модель владеет приватным `MutableStateFlow`, наружу отдаёт `asStateFlow()`. Коллекции внутри State также не изменяются на месте. UI рисует State и передаёт Intent, операции выполняются в `screenModelScope`. Диспетчер для блокирующей работы внедряется напрямую либо контекст переключает нижележащий слой. Модель не хранит Navigator, Context или Composable.
 
-Для SideEffect используется приватный `Channel(Channel.BUFFERED)` и публичный `receiveAsFlow()`. Эффекты не входят в State. У потока один UI-потребитель: несколько коллекционеров разделят события между собой. Событие может ждать активного UI в буфере; переполнение при `send` приостанавливает отправителя. Это не гарантия обработки после сбоя процесса или отмены обработчика: критичные результаты операции должны отражаться в State/БД. Навигационный эффект после получения не проигрывается новому подписчику повторно.
+Для SideEffect используется приватный `Channel(Channel.BUFFERED)` и публичный `receiveAsFlow()`. У потока один UI-потребитель; несколько коллекторов разделят события между собой. Событие может ждать UI в буфере, переполнение при `send` приостанавливает отправителя. Это не гарантия обработки после сбоя процесса или отмены обработчика: критичные результаты отражаются в State/БД. Полученный эффект не проигрывается новому подписчику повторно.
 
-Перед загрузкой: `isLoading = true, error = null`. При успехе обновляются данные и снимается loading; при ошибке остаются предыдущие данные, выставляется понятная ошибка и становится доступен Retry. Retry запускает ту же операцию. Повторную загрузку в примере начинаем с отмены предыдущего Job. `CancellationException` всегда пробрасывается, а не превращается в пользовательскую ошибку. Обработка конкретных доменных ошибок уточняется в каждой фиче.
+Перед загрузкой выставляются `isLoading = true, error = null`. При успехе обновляются данные и снимается loading. При ошибке сохраняются предыдущие данные, выставляется понятная ошибка и доступен Retry. Retry запускает ту же операцию. Повторная загрузка отменяет предыдущий Job. `CancellationException` всегда пробрасывается.
 
-Пример ниже является соглашением для следующей фичи. Он хранится только в документе: тестовый пример и harness пользователь удалил, их восстановление и новые тесты пока отложены. Production-экраны сохраняют демо-контент.
-
-Контракт и пример реализации (стандартные imports из `androidx.lifecycle`, `kotlinx.coroutines`, `kotlinx.coroutines.flow` и `kotlinx.coroutines.channels`):
+Пример хранится только в документе; production-экраны пока сохраняют демо-контент:
 
 ```kotlin
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
 data class ExampleState(
     val count: Int = 0,
     val isLoading: Boolean = false,
@@ -235,9 +246,9 @@ sealed interface ExampleSideEffect {
     data object NavigateToDetails : ExampleSideEffect
 }
 
-class ExampleViewModel(
+class ExampleScreenModel(
     private val loadCount: suspend () -> Int,
-) : ViewModel() {
+) : ScreenModel {
     private val mutableState = MutableStateFlow(ExampleState())
     val state: StateFlow<ExampleState> = mutableState.asStateFlow()
 
@@ -248,7 +259,7 @@ class ExampleViewModel(
     fun onIntent(intent: ExampleIntent) {
         when (intent) {
             ExampleIntent.Refresh, ExampleIntent.Retry -> refresh()
-            ExampleIntent.OpenDetails -> viewModelScope.launch {
+            ExampleIntent.OpenDetails -> screenModelScope.launch {
                 effects.send(ExampleSideEffect.NavigateToDetails)
             }
         }
@@ -256,7 +267,7 @@ class ExampleViewModel(
 
     private fun refresh() {
         loadJob?.cancel()
-        loadJob = viewModelScope.launch {
+        loadJob = screenModelScope.launch {
             mutableState.update { it.copy(isLoading = true, error = null) }
             try {
                 val count = loadCount()
@@ -271,66 +282,64 @@ class ExampleViewModel(
         }
     }
 
-    override fun onCleared() {
+    override fun onDispose() {
         effects.close()
     }
 }
 ```
 
-#### ViewModel, Koin и Voyager
+#### ScreenModel, Koin и Voyager
 
-В production `ProvideNavigatorLifecycleKMPSupport` вызывается в `MainMenuScreen` над TabNavigator и всеми вложенными Navigator. API Voyager экспериментальный; opt-in локален. Provider устанавливает экранные LifecycleOwner и ViewModelStoreOwner. Получать ViewModel нужно **внутри Screen.Content**, где эти owners уже предоставлены.
+[ScreenModel](https://voyager.adriel.cafe/screenmodel/) — штатный интерфейс модели экрана Voyager. Создание и хранение модели привязаны к ключу Screen. Рекомпозиция не создаёт новую модель; при окончательном удалении экрана Voyager вызывает `onDispose()` и отменяет `screenModelScope`. Смена табов при сохранении вложенных навигаторов не должна освобождать модель. Сам объект модели не сохраняется на диск: восстановление навигации после смерти процесса не означает восстановления всех данных из памяти модели.
 
-Koin создаёт ViewModel, а экранный AndroidX ViewModelStore сохраняет экземпляр и управляет очисткой. Для нашего примера достаточно factory-регистрации; singleton для ViewModel запрещён:
+[Интеграция Koin](https://voyager.adriel.cafe/screenmodel/koin-integration/) использует factory и `koinScreenModel()`:
 
 ```kotlin
 import org.koin.dsl.module
-import org.koin.compose.viewmodel.koinViewModel
+import cafe.adriel.voyager.koin.koinScreenModel
 
 val exampleModule = module {
-    // Демонстрационный источник; в реальной фиче сюда внедряется операция загрузки.
-    factory { ExampleViewModel(loadCount = { 42 }) }
+    // В реальной фиче сюда внедряется операция загрузки.
+    factory { ExampleScreenModel(loadCount = { 42 }) }
 }
 
-// В Screen.Content():
-val viewModel = koinViewModel<ExampleViewModel>()
+// Внутри Screen.Content():
+val screenModel = koinScreenModel<ExampleScreenModel>()
 ```
 
-Не использовать `get<ExampleViewModel>()` напрямую в каждой рекомпозиции: factory будет создавать новые экземпляры. Не передавать Activity owner и не использовать navigator-scoped ViewModel, если ViewModel принадлежит одному экрану. Для параметризованных экранов задавать ключ Screen с ID экземпляра маршрута, иначе разные экземпляры могут разделить lifecycle store.
+Не создавать модель через обычный `remember` и не вызывать Koin `get` на каждой рекомпозиции: они не обеспечивают правильное владение со стороны Voyager. Не регистрировать модель как singleton. Для параметризованных экранов нужен стабильный уникальный key маршрута. Для нескольких моделей одного типа в пределах Screen используется tag. Navigator-scoped модель выбирается только когда действительно нужна общая модель нескольких экранов.
 
-Пример подключения внутри Screen.Content (imports: `androidx.lifecycle.compose.collectAsStateWithLifecycle`, `androidx.lifecycle.compose.LocalLifecycleOwner`, `androidx.lifecycle.repeatOnLifecycle`, Compose `LaunchedEffect`/`getValue`):
+Пример подключения UI внутри Screen.Content:
 
 ```kotlin
-val viewModel = koinViewModel<ExampleViewModel>()
-val state by viewModel.state.collectAsStateWithLifecycle()
-val lifecycleOwner = LocalLifecycleOwner.current
+// Compose imports: collectAsState, getValue, LaunchedEffect.
+val screenModel = koinScreenModel<ExampleScreenModel>()
+val state by screenModel.state.collectAsState()
 val navigator = LocalNavigator.currentOrThrow
 
-LaunchedEffect(viewModel, lifecycleOwner, navigator) {
-    lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        viewModel.sideEffects.collect { effect ->
-            when (effect) {
-                ExampleSideEffect.NavigateToDetails -> navigator.push(AboutScreen)
-            }
+LaunchedEffect(screenModel, navigator) {
+    screenModel.sideEffects.collect { effect ->
+        when (effect) {
+            ExampleSideEffect.NavigateToDetails -> navigator.push(AboutScreen)
         }
     }
 }
-// В UI используются state и обработчик viewModel::onIntent.
-// Первую загрузку можно отправить из init ViewModel;
-// не отправлять Refresh непосредственно из тела Composable.
+// UI использует state и обработчик screenModel::onIntent.
+// Первую загрузку можно запускать из init модели;
+// не отправлять Refresh прямо из тела Composable.
 ```
 
-UI-функция принимает State и callbacks; preview передаёт обычный State и пустые callbacks, не создавая production Koin или ViewModel.
+Здесь UI-подписки существуют, пока экран находится в composition. При смене видимого экрана `LaunchedEffect` отменяется, но работа самой модели в `screenModelScope` продолжается до её disposal. Это не автоматическая приостановка работы при уходе приложения в фон; такую потребность решаем отдельно в конкретной фиче.
+
+UI-функция принимает State и callbacks. Preview получает обычный State и пустые callbacks без production Koin и модели.
 
 #### Результат 1.6
 
-Provider подключён над всеми навигаторами в `MainMenuScreen`, с локальным opt-in. Пока в production нет ViewModel, использующих этот экранный owner. Соглашение и пример выше задают способ подключения будущих фич.
+По решению пользователя вместо AndroidX KMP ViewModel выбран Voyager ScreenModel. В `shared` подключены `voyager-screenmodel` и `voyager-koin` версии `2.2.21-1.10.3`. Прямые зависимости lifecycle-kmp, Koin Compose ViewModel и AndroidX lifecycle Compose удалены. Стандартные AndroidX lifecycle-зависимости могут оставаться транзитивно у Android-компонентов.
 
-По просьбе пользователя MVI-тесты и lifecycle harness удалены, Compose UI test зависимости также удалены. Они не восстанавливаются; дальнейшая работа пока без добавления и запуска тестов. Существующие ранее DI-тесты остаются в проекте, их результат не подтверждён.
+Из `MainMenuScreen` удалены `ProvideNavigatorLifecycleKMPSupport`, experimental opt-in и вспомогательная обёртка. Навигация и её стеки сохранены. В production пока нет моделей состояния: соглашение выше применяется с первой фичи.
 
-Статус экспериментального API обсуждён с пользователем: текущую интеграцию пока оставляем. Provider задаёт экранных владельцев Lifecycle/ViewModelStore; factory-лямбда `viewModel { ... }` только создаёт экземпляр при необходимости и использует уже предоставленного owner.
-
-`git diff --check` — без ошибок. Новые сборки и runtime-проверки не запускались по просьбе пользователя. Ранее подтверждённая работа навигации на Android/iOS не означает проверки lifecycle ViewModel.
+Тестовый MVI-пример и harness удалены пользователем, их не восстанавливаем. Сборки, Gradle sync и тесты не запускаются по его просьбе. Совместимость новых зависимостей и runtime lifecycle остаются непроверенными. Версии новых модулей проверены через `studio_version_lookup`, API сверены с документацией Voyager.
 
 ## Проверка и критерии завершения
 
@@ -339,11 +348,29 @@ Provider подключён над всеми навигаторами в `MainM
 - [ ] DI-тесты разрешают все зарегистрированные зависимости на обеих платформах.
 - [ ] Room-тесты проверяют запись/чтение, сохранность после переоткрытия, внешний ключ и каскадное удаление.
 - [ ] MVI-тест проверяет изменение State и однократную доставку SideEffect.
-- [ ] Проверены независимые стеки табов, возврат назад и lifecycle ViewModel.
+- [ ] Проверены независимые стеки табов, возврат назад и lifecycle ScreenModel.
 - [ ] На Android после поворота сохраняются выбранный таб и вложенный экран.
 - [ ] После перезапуска процесса приложение открывается на Tasks, данные Room сохраняются.
-- [ ] В документе записаны фактически выполненные команды и результаты проверок.
-- [ ] В `MASTER_PLAN.md` отмечены выполненные критерии шага 1 и уточнено, что схема Deck + Flashcard подготовлена заранее.
+- [x] В документе записаны фактически выполненные команды и результаты проверок.
+- [x] В `MASTER_PLAN.md` отмечены выполненные критерии шага 1 и уточнено, что схема Deck + Flashcard подготовлена заранее.
+
+## Итог реализации и отложенные проверки
+
+Реализация пунктов 1.1–1.6 сохранена по итогам ревью:
+- `3a78409` — зависимости;
+- `c99c134` — core-модули и источник времени, без AppDispatchers;
+- `aeba29b` — Room KMP;
+- `f95d0b0` — DI, пользовательское обновление Gradle до 9.8.2 и экспортированная схема v1;
+- `7dba371` — независимые стеки табов, включая правки пользователя;
+- `cefb0cb` — первоначальный вариант MVI с AndroidX KMP lifecycle; затем заменён на ScreenModel по решению пользователя.
+
+Пользователь подтвердил работу навигации на Android и iOS. Агент ранее выполнил `:androidApp:assembleDebug` успешно до изменения зависимостей; последующие сборки и тесты не запускались по просьбе пользователя. Схема Room появилась после пользовательской сборки. IDE inspections production-навигации не выявили ошибок; это не заменяет runtime-проверку.
+
+Финальная статическая сверка: три core-модуля связаны без циклов; Room имеет обе сущности, DAO, builders и схему; DI инициализируется вне composable-экранов; навигация использует отдельные стеки; MVI и получение экранной ScreenModel описаны в документе. `git diff --check` выполнен без ошибок.
+
+По просьбе пользователя новые тесты не добавляем и не восстанавливаем удалённые. Проверки Room/DI, lifecycle ScreenModel, Android rotation и восстановления процесса остаются открытыми. Поведение «после перезапуска процесса всегда Tasks» отдельно не проверено: стандартное восстановление Voyager может вернуть сохранённую навигацию, поэтому это требование не отмечено выполненным. Инициализация DI и успешный запуск UI сами по себе не подтверждают операции БД.
+
+Состояние: инфраструктурный код подготовлен, приёмочные проверки отложены. Следующий этап Master Plan — CRUD колод (шаг 2); он не входит в данный документ.
 
 ## Границы шага
 

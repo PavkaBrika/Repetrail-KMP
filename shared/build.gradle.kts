@@ -53,14 +53,12 @@ kotlin {
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
             implementation(libs.compose.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
             api(libs.koin.core)
             implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewmodel)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.tabNavigator)
-            implementation(libs.voyager.lifecycleKmp)
+            implementation(libs.voyager.screenmodel)
+            implementation(libs.voyager.koin)
             implementation(libs.kotlinx.coroutines.core)
         }
         commonTest.dependencies {
