@@ -14,14 +14,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
+import cafe.adriel.voyager.jetpack.ProvideNavigatorLifecycleKMPSupport
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.TabDisposable
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.breckneck.core.ui.designsystem.theme.RepetrailTheme
 import com.breckneck.repetrail.ui.components.FloatingNavigationBar
 
+@OptIn(ExperimentalVoyagerApi::class)
 @Composable
 fun MainMenuScreen() {
+    ProvideNavigatorLifecycleKMPSupport {
+        MainMenuContent()
+    }
+}
+
+@Composable
+private fun MainMenuContent() {
     RepetrailTheme {
         TabNavigator(
             tab = MainTab.Tasks,

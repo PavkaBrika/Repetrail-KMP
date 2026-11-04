@@ -184,18 +184,153 @@ Lifecycle KMP provider и проверка времени жизни ViewModel �
 
 ### 1.6. Зафиксировать MVI и lifecycle ViewModel
 
-- [ ] Описать контракт фичи: immutable `State`, `Intent`, `SideEffect`, `ViewModel`.
-- [ ] Зафиксировать интерфейс ViewModel: `StateFlow<State>`, `Flow<SideEffect>`, `onIntent(intent)`.
-- [ ] Использовать приватный `MutableStateFlow` и публичный read-only state.
-- [ ] Для одноразовых эффектов использовать `Channel` с получением через `receiveAsFlow`; эффекты не хранить в State.
-- [ ] Зафиксировать: UI передаёт intents, ViewModel выполняет операции в `viewModelScope`, UI обрабатывает навигационные эффекты.
-- [ ] Описать обработку загрузки, ошибки и повторной попытки; отмену корутин не превращать в пользовательскую ошибку.
-- [ ] Привязать ViewModel к экрану Voyager, а не к singleton приложения.
-- [ ] Подключить lifecycle KMP provider над навигаторами согласно [документации Voyager](https://voyager.adriel.cafe/android-viewmodel/viewmodel-kmp/).
-- [ ] Добавить пример контракта и получения ViewModel через Koin в этот документ.
-- [ ] В тестовом harness проверить: recomposition и переключение табов сохраняют экземпляр, окончательный `pop` освобождает ViewModel и её корутины.
+- [x] Описать контракт фичи: immutable `State`, `Intent`, `SideEffect`, `ViewModel`.
+- [x] Зафиксировать интерфейс ViewModel: `StateFlow<State>`, `Flow<SideEffect>`, `onIntent(intent)`.
+- [x] Использовать приватный `MutableStateFlow` и публичный read-only state.
+- [x] Для одноразовых эффектов использовать `Channel` с получением через `receiveAsFlow`; эффекты не хранить в State.
+- [x] Зафиксировать: UI передаёт intents, ViewModel выполняет операции в `viewModelScope`, UI обрабатывает навигационные эффекты.
+- [x] Описать обработку загрузки, ошибки и повторной попытки; отмену корутин не превращать в пользовательскую ошибку.
+- [x] Привязать ViewModel к экрану Voyager, а не к singleton приложения.
+- [x] Подключить lifecycle KMP provider над навигаторами согласно [документации Voyager](https://voyager.adriel.cafe/android-viewmodel/viewmodel-kmp/).
+- [x] Добавить пример контракта и получения ViewModel через Koin в этот документ.
+- [ ] Проверку lifecycle ViewModel (recomposition, переключение табов, окончательный pop и отмена корутин) отложить по просьбе пользователя; harness удалён.
 
 **Готово, когда:** следующую фичу можно реализовать по документированному образцу без выбора нового архитектурного подхода.
+
+#### Соглашение MVI
+
+Обязательного базового класса нет. Каждая фича определяет собственные:
+
+| Часть | Контракт |
+|---|---|
+| State | immutable data class, все поля val; данные для отображения, загрузка, ошибка |
+| Intent | sealed interface пользовательских действий: загрузить, повторить, сохранить и т. п. |
+| SideEffect | sealed interface одноразовых команд UI: навигация, snackbar |
+| ViewModel | AndroidX KMP ViewModel с `StateFlow<State>`, `Flow<SideEffect>`, `onIntent(intent)` |
+
+ViewModel владеет приватным `MutableStateFlow`, наружу отдаёт `asStateFlow()`. Коллекции внутри State также не должны изменяться на месте. UI рисует State и передаёт Intent, операции выполняются в `viewModelScope`. Диспетчер для блокирующей работы передаётся напрямую через конструктор либо переключение контекста выполняет нижележащий слой. Навигацией управляет UI, ViewModel не хранит Navigator, Context или Composable.
+
+Для SideEffect используется приватный `Channel(Channel.BUFFERED)` и публичный `receiveAsFlow()`. Эффекты не входят в State. У потока один UI-потребитель: несколько коллекционеров разделят события между собой. Событие может ждать активного UI в буфере; переполнение при `send` приостанавливает отправителя. Это не гарантия обработки после сбоя процесса или отмены обработчика: критичные результаты операции должны отражаться в State/БД. Навигационный эффект после получения не проигрывается новому подписчику повторно.
+
+Перед загрузкой: `isLoading = true, error = null`. При успехе обновляются данные и снимается loading; при ошибке остаются предыдущие данные, выставляется понятная ошибка и становится доступен Retry. Retry запускает ту же операцию. Повторную загрузку в примере начинаем с отмены предыдущего Job. `CancellationException` всегда пробрасывается, а не превращается в пользовательскую ошибку. Обработка конкретных доменных ошибок уточняется в каждой фиче.
+
+Пример ниже является соглашением для следующей фичи. Он хранится только в документе: тестовый пример и harness пользователь удалил, их восстановление и новые тесты пока отложены. Production-экраны сохраняют демо-контент.
+
+Контракт и пример реализации (стандартные imports из `androidx.lifecycle`, `kotlinx.coroutines`, `kotlinx.coroutines.flow` и `kotlinx.coroutines.channels`):
+
+```kotlin
+data class ExampleState(
+    val count: Int = 0,
+    val isLoading: Boolean = false,
+    val error: String? = null,
+)
+
+sealed interface ExampleIntent {
+    data object Refresh : ExampleIntent
+    data object Retry : ExampleIntent
+    data object OpenDetails : ExampleIntent
+}
+
+sealed interface ExampleSideEffect {
+    data object NavigateToDetails : ExampleSideEffect
+}
+
+class ExampleViewModel(
+    private val loadCount: suspend () -> Int,
+) : ViewModel() {
+    private val mutableState = MutableStateFlow(ExampleState())
+    val state: StateFlow<ExampleState> = mutableState.asStateFlow()
+
+    private val effects = Channel<ExampleSideEffect>(Channel.BUFFERED)
+    val sideEffects: Flow<ExampleSideEffect> = effects.receiveAsFlow()
+    private var loadJob: Job? = null
+
+    fun onIntent(intent: ExampleIntent) {
+        when (intent) {
+            ExampleIntent.Refresh, ExampleIntent.Retry -> refresh()
+            ExampleIntent.OpenDetails -> viewModelScope.launch {
+                effects.send(ExampleSideEffect.NavigateToDetails)
+            }
+        }
+    }
+
+    private fun refresh() {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            mutableState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val count = loadCount()
+                mutableState.update { it.copy(count = count, isLoading = false) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                mutableState.update {
+                    it.copy(isLoading = false, error = "Не удалось загрузить данные")
+                }
+            }
+        }
+    }
+
+    override fun onCleared() {
+        effects.close()
+    }
+}
+```
+
+#### ViewModel, Koin и Voyager
+
+В production `ProvideNavigatorLifecycleKMPSupport` вызывается в `MainMenuScreen` над TabNavigator и всеми вложенными Navigator. API Voyager экспериментальный; opt-in локален. Provider устанавливает экранные LifecycleOwner и ViewModelStoreOwner. Получать ViewModel нужно **внутри Screen.Content**, где эти owners уже предоставлены.
+
+Koin создаёт ViewModel, а экранный AndroidX ViewModelStore сохраняет экземпляр и управляет очисткой. Для нашего примера достаточно factory-регистрации; singleton для ViewModel запрещён:
+
+```kotlin
+import org.koin.dsl.module
+import org.koin.compose.viewmodel.koinViewModel
+
+val exampleModule = module {
+    // Демонстрационный источник; в реальной фиче сюда внедряется операция загрузки.
+    factory { ExampleViewModel(loadCount = { 42 }) }
+}
+
+// В Screen.Content():
+val viewModel = koinViewModel<ExampleViewModel>()
+```
+
+Не использовать `get<ExampleViewModel>()` напрямую в каждой рекомпозиции: factory будет создавать новые экземпляры. Не передавать Activity owner и не использовать navigator-scoped ViewModel, если ViewModel принадлежит одному экрану. Для параметризованных экранов задавать ключ Screen с ID экземпляра маршрута, иначе разные экземпляры могут разделить lifecycle store.
+
+Пример подключения внутри Screen.Content (imports: `androidx.lifecycle.compose.collectAsStateWithLifecycle`, `androidx.lifecycle.compose.LocalLifecycleOwner`, `androidx.lifecycle.repeatOnLifecycle`, Compose `LaunchedEffect`/`getValue`):
+
+```kotlin
+val viewModel = koinViewModel<ExampleViewModel>()
+val state by viewModel.state.collectAsStateWithLifecycle()
+val lifecycleOwner = LocalLifecycleOwner.current
+val navigator = LocalNavigator.currentOrThrow
+
+LaunchedEffect(viewModel, lifecycleOwner, navigator) {
+    lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.sideEffects.collect { effect ->
+            when (effect) {
+                ExampleSideEffect.NavigateToDetails -> navigator.push(AboutScreen)
+            }
+        }
+    }
+}
+// В UI используются state и обработчик viewModel::onIntent.
+// Первую загрузку можно отправить из init ViewModel;
+// не отправлять Refresh непосредственно из тела Composable.
+```
+
+UI-функция принимает State и callbacks; preview передаёт обычный State и пустые callbacks, не создавая production Koin или ViewModel.
+
+#### Результат 1.6
+
+Provider подключён над всеми навигаторами в `MainMenuScreen`, с локальным opt-in. Пока в production нет ViewModel, использующих этот экранный owner. Соглашение и пример выше задают способ подключения будущих фич.
+
+По просьбе пользователя MVI-тесты и lifecycle harness удалены, Compose UI test зависимости также удалены. Они не восстанавливаются; дальнейшая работа пока без добавления и запуска тестов. Существующие ранее DI-тесты остаются в проекте, их результат не подтверждён.
+
+Статус экспериментального API обсуждён с пользователем: текущую интеграцию пока оставляем. Provider задаёт экранных владельцев Lifecycle/ViewModelStore; factory-лямбда `viewModel { ... }` только создаёт экземпляр при необходимости и использует уже предоставленного owner.
+
+`git diff --check` — без ошибок. Новые сборки и runtime-проверки не запускались по просьбе пользователя. Ранее подтверждённая работа навигации на Android/iOS не означает проверки lifecycle ViewModel.
 
 ## Проверка и критерии завершения
 
