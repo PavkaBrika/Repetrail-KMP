@@ -9,23 +9,17 @@ When creating or amending Git commits for this project, you MUST adhere to the f
 
 1. **Language:** Write the commit message in **English**.
 2. **Human Style:** Write naturally and clearly. Do NOT use conventional commit prefixes (e.g., `feat:`, `fix:`, `docs:`, `chore:`).
-3. **Imperative Mood:** The subject line (first line) MUST start with a capitalized imperative verb (e.g., `Add`, `Create`, `Update`, `Fix`, `Remove`, `Refactor`). 
+3. **Imperative Mood:** The commit message MUST start with a capitalized imperative verb (e.g., `Add`, `Create`, `Update`, `Fix`, `Remove`, `Refactor`). 
    - *Correct:* `Add navigation dependency`
    - *Incorrect:* `Added navigation dependency`
    - *Incorrect:* `Adds navigation dependency`
-4. **Structure:**
-   - **Subject Line:** A short summary of the changes (preferably 50 characters or less).
-   - **Blank Line:** Leave one blank line between the subject and the body.
-   - **Body (optional):** Provide details on *what* was changed and *why*, if the subject line is not self-explanatory.
+4. **Single Line Only:** Write concise, single-line commit messages without any description or body (preferably 50 characters or less).
 
 ## Examples
 
 **Good:**
 ```
 Add UserViewModel to handle profile data
-
-Create the initial implementation of the user profile screen and 
-connect it with the local database.
 ```
 
 **Good:**
