@@ -66,9 +66,9 @@ flowchart TD
 
 **Зачем:** Текущий DAO не поддерживает update — нужен для редактирования колоды.
 
-- [ ] Добавить `@Update suspend fun update(deck: DeckEntity)` в `DeckDao`
-- [ ] Добавить `@Query("SELECT COUNT(*) FROM flashcards WHERE deckId = :deckId") suspend fun getFlashcardCount(deckId: Long): Int` в `DeckDao` (для отображения кол-ва карточек и текста в диалоге удаления)
-- [ ] Убедиться, что `observeAll()` возвращает колоды с сортировкой по `updatedAt DESC` (или оставить `createdAt DESC` — определить при реализации, но `updatedAt DESC` логичнее, чтобы недавно отредактированные были выше)
+- [x] Добавить `@Update suspend fun update(deck: DeckEntity)` в `DeckDao`
+- [x] Добавить `@Query("SELECT COUNT(*) FROM flashcards WHERE deckId = :deckId") suspend fun getFlashcardCount(deckId: Long): Int` в `DeckDao` (для отображения кол-ва карточек и текста в диалоге удаления)
+- [x] Убедиться, что `observeAll()` возвращает колоды с сортировкой по `updatedAt DESC` (или оставить `createdAt DESC` — определить при реализации, но `updatedAt DESC` логичнее, чтобы недавно отредактированные были выше)
 
 > [!NOTE]
 > `FlashcardDao` пока не трогаем — количество карточек для отображения в списке колод можно получить через `DeckDao` с JOIN-запросом или отдельным query. Простой вариант — query `COUNT(*)` в `DeckDao`.
@@ -84,7 +84,7 @@ flowchart TD
 
 **Зачем:** `core:domain` сейчас пустой. Нужно создать domain-модель `Deck`, интерфейс репозитория и use cases — всё без зависимостей от Room, Koin, Compose.
 
-- [ ] Создать `core/domain/src/commonMain/kotlin/com/breckneck/core/domain/model/Deck.kt`:
+- [x] Создать `core/domain/src/commonMain/kotlin/com/breckneck/core/domain/model/Deck.kt`:
   ```kotlin
   data class Deck(
       val id: Long = 0,
@@ -95,7 +95,7 @@ flowchart TD
       val updatedAt: Long,
   )
   ```
-- [ ] Создать интерфейс `core/domain/src/commonMain/kotlin/com/breckneck/core/domain/repository/DeckRepository.kt`:
+- [x] Создать интерфейс `core/domain/src/commonMain/kotlin/com/breckneck/core/domain/repository/DeckRepository.kt`:
   ```kotlin
   interface DeckRepository {
       fun observeDecks(): Flow<List<Deck>>
@@ -105,12 +105,12 @@ flowchart TD
       suspend fun getFlashcardCount(deckId: Long): Int
   }
   ```
-- [ ] Создать use cases в `core/domain/src/commonMain/kotlin/com/breckneck/core/domain/usecase/deck/`:
+- [x] Создать use cases в `core/domain/src/commonMain/kotlin/com/breckneck/core/domain/usecase/deck/`:
   - `ObserveDecksUseCase` — обёртка над `repository.observeDecks()`
   - `GetDeckByIdUseCase` — обёртка над `repository.getDeckById(id)`
   - `SaveDeckUseCase` — вызывает `repository.saveDeck(deck)`, принимает name, description, опциональный id для update
   - `DeleteDeckUseCase` — вызывает `repository.deleteDeck(id)`
-- [ ] Добавить зависимость `kotlinx-coroutines-core` в `core:domain` build.gradle.kts (для `Flow`)
+- [x] Добавить зависимость `kotlinx-coroutines-core` в `core:domain` build.gradle.kts (для `Flow`)
 
 > [!TIP]
 > Use cases на этом этапе тонкие (просто проксируют репозиторий). Это нормально — они станут полезны когда добавится бизнес-логика (Leitner, XP). Альтернатива: использовать репозиторий напрямую в ScreenModel, а use cases добавить позже. **Решение за разработчиком.**
@@ -134,14 +134,14 @@ flowchart TD
 
 **Зачем:** Реализация DeckRepository, которая маппит DeckEntity ↔ Deck и работает с DeckDao.
 
-- [ ] Создать `core/data/src/commonMain/kotlin/com/breckneck/core/data/repository/DeckRepositoryImpl.kt`:
-  - Принимает `DeckDao` и `TimeProvider` через конструктор
-  - `observeDecks()` — маппит `observeAll()` Flow, для каждой колоды подсчитывает `cardCount` (либо использовать JOIN-запрос в DAO для эффективности)
+- [x] Создать `core/data/src/commonMain/kotlin/com/breckneck/core/data/repository/DeckRepositoryImpl.kt`:
+  - Принимает `DeckDao` через конструктор
+  - `observeDecks()` — маппит `observeAllWithCardCount()` Flow
   - `getDeckById(id)` — маппит `getById(id)`
-  - `saveDeck(deck)` — если `deck.id == 0` → `insert(toEntity(deck))`, иначе `update(toEntity(deck))` с обновлением `updatedAt`
+  - `saveDeck(deck)` — если `deck.id == 0` → `insert(toEntity(deck))`, иначе `update(toEntity(deck))`
   - `deleteDeck(id)` — вызывает `deleteById(id)`
   - `getFlashcardCount(deckId)` — вызывает DAO
-- [ ] Создать private extension-функции маппинга `DeckEntity.toDomain()` и `Deck.toEntity()` (или внутренний mapper-объект)
+- [x] Создать мапперы `toDomain()` и `toEntity()` в `core/data/src/commonMain/kotlin/com/breckneck/core/data/mapper/DeckMapper.kt`
 
 > [!IMPORTANT]
 > **Вариант с `cardCount` в `observeDecks()`:** Два подхода:
@@ -152,6 +152,7 @@ flowchart TD
 
 **Файлы (новые):**
 - `core/data/src/commonMain/kotlin/com/breckneck/core/data/repository/DeckRepositoryImpl.kt`
+- `core/data/src/commonMain/kotlin/com/breckneck/core/data/mapper/DeckMapper.kt`
 
 **Файлы (модификация):**
 - `core/data/src/commonMain/kotlin/com/breckneck/core/data/local/dao/DeckDao.kt` (задача 2.1)
@@ -164,11 +165,11 @@ flowchart TD
 
 **Зачем:** Новый KMP-модуль для UI и ScreenModel фичи «Колоды».
 
-- [ ] Создать директорию `feature/deck/` с `build.gradle.kts` по образцу существующих core-модулей (НЕ по шаблону `feature:add_card` — он использует `iosX64`, AGP `compileSdk 36` и другую структуру)
-- [ ] Настроить таргеты: `android` + `iosArm64` + `iosSimulatorArm64` (без framework binaries — модуль входит через `shared`)
-- [ ] Android namespace: `com.breckneck.feature.deck`
-- [ ] compileSdk, minSdk, JVM target — по образцу `core:domain`
-- [ ] Зависимости `commonMain`:
+- [x] Создать директорию `feature/deck/` с `build.gradle.kts` по образцу существующих core-модулей (НЕ по шаблону `feature:add_card` — он использует `iosX64`, AGP `compileSdk 36` и другую структуру)
+- [x] Настроить таргеты: `android` + `iosArm64` + `iosSimulatorArm64` (без framework binaries — модуль входит через `shared`)
+- [x] Android namespace: `com.breckneck.feature.deck`
+- [x] compileSdk, minSdk, JVM target — по образцу `core:domain`
+- [x] Зависимости `commonMain`:
   - `implementation(project(":core:domain"))`
   - `implementation(project(":core:ui:designsystem"))`
   - `implementation(project(":core:common"))`
@@ -181,8 +182,8 @@ flowchart TD
   - `implementation(libs.voyager.koin)`
   - `implementation(libs.koin.core)`
   - `implementation(libs.kotlinx.coroutines.core)`
-- [ ] Добавить `include(":feature:deck")` в `settings.gradle.kts`
-- [ ] Добавить `implementation(project(":feature:deck"))` в `shared/build.gradle.kts` → `commonMain.dependencies`
+- [x] Добавить `include(":feature:deck")` в `settings.gradle.kts`
+- [x] Добавить `implementation(project(":feature:deck"))` в `shared/build.gradle.kts` → `commonMain.dependencies`
 
 **Файлы (новые):**
 - `feature/deck/build.gradle.kts`
@@ -201,13 +202,13 @@ flowchart TD
 
 **Зачем:** Связать все новые компоненты в Koin-граф.
 
-- [ ] В `shared/src/commonMain/.../di/DataModule.kt` зарегистрировать:
-  - `single<DeckRepository> { DeckRepositoryImpl(deckDao = get(), timeProvider = get()) }`
-- [ ] Создать `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/di/DeckModule.kt`:
+- [x] В `shared/src/commonMain/.../di/DataModule.kt` зарегистрировать:
+  - `single<DeckRepository> { DeckRepositoryImpl(deckDao = get()) }`
+- [x] Создать `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/di/DeckModule.kt`:
   - Зарегистрировать use cases как `factory` (или `single` если stateless — оба варианта работают, `factory` безопаснее)
-  - Зарегистрировать `DeckListScreenModel` как `factory`
-  - Зарегистрировать `DeckFormScreenModel` как `factory` (с параметрами для `deckId`)
-- [ ] Подключить `deckModule` к общему Koin-графу в `InitKoin.kt`
+  - Зарегистрировать `DeckListScreenModel` как `factory` (будут добавлены при их создании в 2.6/2.7)
+  - Зарегистрировать `DeckFormScreenModel` как `factory`
+- [x] Подключить `deckModule` к общему Koin-графу в `InitKoin.kt`
 
 > [!NOTE]
 > По соглашению MVI (шаг 1): ScreenModel регистрируется как **factory** (не singleton), получается через `koinScreenModel()`.
