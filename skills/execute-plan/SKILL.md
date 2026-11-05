@@ -13,6 +13,7 @@ This skill defines the step-by-step workflow for executing implementation plans 
    - Execute tasks strictly in the order defined in `task.artifact.md` and `implementation_plan.artifact.md`.
    - Do NOT deviate from the agreed scope or perform unplanned changes without prior approval.
    - Focus on **exactly one task** at a time.
+   - **Do NOT rewrite or edit plan text:** When updating `task.artifact.md`, ONLY update the task checkbox states (`[ ]` -> `[/]` -> `[x]`). Never modify, rewrite, reformat, or delete task descriptions or plan text.
 
 2. **Step-by-Step Execution:**
    - Before starting a task:
