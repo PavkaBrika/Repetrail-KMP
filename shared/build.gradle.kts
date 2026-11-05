@@ -47,6 +47,7 @@ kotlin {
             implementation(project(":core:common"))
             implementation(project(":core:domain"))
             implementation(project(":core:data"))
+            implementation(project(":feature:deck"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
