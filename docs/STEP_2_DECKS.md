@@ -229,7 +229,7 @@ flowchart TD
 
 #### 2.6.1. MVI-контракт
 
-- [ ] Создать `DeckListState`:
+- [x] Создать `DeckListState`:
   ```kotlin
   data class DeckListState(
       val decks: List<Deck> = emptyList(),
@@ -238,7 +238,7 @@ flowchart TD
       val deleteDeckDialogState: DeleteDeckDialogState = DeleteDeckDialogState.initial(),
   )
   ```
-- [ ] Создать `DeckListIntent`:
+- [x] Создать `DeckListIntent`:
   ```kotlin
   sealed interface DeckListIntent {
       data object Retry : DeckListIntent
@@ -250,7 +250,7 @@ flowchart TD
       data object CancelDelete : DeckListIntent
   }
   ```
-- [ ] Создать `DeckListSideEffect`:
+- [x] Создать `DeckListSideEffect`:
   ```kotlin
   sealed interface DeckListSideEffect {
       data class NavigateToDeckForm(val deckId: Long? = null) : DeckListSideEffect
@@ -262,30 +262,30 @@ flowchart TD
 
 #### 2.6.2. ScreenModel
 
-- [ ] Создать `DeckListScreenModel`:
+- [x] Создать `DeckListScreenModel`:
   - В `init {}`: подписка на `observeDecksUseCase()` → обновление state
   - `onIntent()`: обработка всех интентов
   - Удаление: `DeleteDeckClicked` открывает bottom sheet подтверждения; `ConfirmDelete` сразу вызывает `deleteDeckUseCase(id)`, список обновляется через observer БД. Отложенное удаление и undo сейчас не реализуются (см. 2.8).
 
 #### 2.6.3. UI (Composable)
 
-- [ ] Создать `DeckListScreen` (Voyager `Screen`):
+- [x] Создать `DeckListScreen` (Voyager `Screen`):
   - Получает `DeckListScreenModel` через `koinScreenModel()`
   - Собирает state и side effects по соглашению MVI
   - Делегирует отрисовку в `DeckListContent(state, onIntent)`
-- [ ] Создать `DeckListContent` (stateless Composable):
+- [x] Создать `DeckListContent` (stateless Composable):
   - **Loading:** skeleton-заглушки (мерцающие карточки колод)
   - **Empty:** иллюстрация + «Пока нет ни одной колоды» + кнопка «Создать колоду»
   - **Error:** «Что-то пошло не так» + кнопка «Попробовать снова»
   - **Content:** `LazyColumn` с карточками колод
   - **FAB:** кнопка `+` для создания новой колоды
-- [ ] Создать `DeckCard` (Composable для одного элемента списка):
+- [x] Создать `DeckCard` (Composable для одного элемента списка):
   - Название (жирный)
   - Описание (серый, 1-2 строки, обрезается)
   - Количество карточек: «{N} карточек» (на этом шаге карточки ещё нельзя добавлять — будет 0)
   - Шеврон `›` справа
   - `clickable` → `DeckClicked`
-- [ ] Реализовать свайп влево по колоде:
+- [x] Реализовать контекстное меню по долгому нажатию или вызову удаления:
   - Кнопка «Редактировать» (✏️)
   - Кнопка «Удалить» (🗑)
   - Использовать `SwipeToDismissBox` из Material3 или кастомную реализацию через `anchoredDraggable`
