@@ -29,6 +29,8 @@ Obtain colors, shapes, sizes, spacing, elevation, and typography through `Repetr
 
 If no token fits, propose a token name, concrete value, semantic purpose, and the source file to extend. Include light/dark values when relevant. Obtain agreement on the design-system extension before adding or applying the value. Do not silently substitute a literal, derive an ad hoc style, or repurpose an unrelated token. Continue independent work that does not depend on the decision; existing explicit approval for that particular extension is sufficient.
 
+Whenever introducing a hardcoded UI value (such as spacing, size, or an offset), add a brief adjacent comment explaining its purpose and where the value comes from or how it is calculated. This also applies when defining a new token. One or two short sentences are enough: explain the reason or calculation rather than restating the code. A comment does not replace token reuse or the required agreement on a design-system extension.
+
 ## 3. Spacing and code grouping
 
 Prefer `Spacer` for gaps between elements while it improves readability. Use token-based `padding` for internal space and when extra spacers would make the layout harder to read. Preserve necessary system insets and scroll-container `contentPadding`; do not replace them with spacers. Concise arrangements or list spacing are appropriate when individual spacers would add noise.
@@ -43,9 +45,7 @@ Column(modifier = modifier) {
         color = RepetrailTheme.colors.ink,
     )
 
-    Spacer(
-        modifier = Modifier.height(height = RepetrailTheme.dimensions.spacings.medium),
-    )
+    Spacer(Modifier.height(RepetrailTheme.dimensions.spacings.medium))
 
     Text(
         text = description,
@@ -59,9 +59,11 @@ Here `title` and `description` are inputs: resolve app-authored copy from resour
 
 ## 4. Named arguments and lambdas
 
-Name call arguments wherever Kotlin supports it. Obvious UI content may use a trailing lambda, such as `Box(modifier = modifier) { ... }` or `RepetrailTheme { ... }`.
+Use named arguments when they improve clarity, such as ambiguous values, booleans, or multiple similar parameters. Ordinary arguments may be positional when their role is obvious from the call: `Spacer(Modifier.height(RepetrailTheme.dimensions.spacings.medium))` does not need `modifier =` or `height =`. Do not add redundant names mechanically.
 
-Always pass event handlers explicitly by name, especially on custom components: `onBackClick = { navigator.pop() }`, `onBackClick = onBackClick`, or `onIntent = screenModel::onIntent`. Do not place an event handler in the trailing-lambda position. Kotlin restrictions on named arguments still apply, including calls through function types. Implicit `it` is allowed when its meaning is clear; use an explicit parameter name when it improves clarity.
+Name every non-content lambda or function-valued argument wherever Kotlin supports named arguments, including event handlers, predicates, transformations, and item keys. In particular, pass custom-component handlers as `onBackClick = { navigator.pop() }`, `onBackClick = onBackClick`, or `onIntent = screenModel::onIntent`. Do not put these arguments in the trailing-lambda position.
+
+Obvious UI content is the exception and may use a trailing lambda, such as `Box(modifier) { ... }` or `RepetrailTheme { ... }`. Kotlin restrictions on named arguments still apply, including calls through function types. Implicit `it` is allowed when its meaning is clear; use an explicit parameter name when it improves clarity.
 
 ## 5. Localized copy from the start
 
