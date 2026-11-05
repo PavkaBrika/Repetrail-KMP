@@ -4,7 +4,7 @@ import com.breckneck.core.domain.usecase.deck.DeleteDeckUseCase
 import com.breckneck.core.domain.usecase.deck.GetDeckByIdUseCase
 import com.breckneck.core.domain.usecase.deck.ObserveDecksUseCase
 import com.breckneck.core.domain.usecase.deck.SaveDeckUseCase
-import com.breckneck.feature.deck.list.DeckListScreenModel
+import com.breckneck.feature.deck.presentation.DeckListScreenModel
 import org.koin.dsl.module
 
 val deckModule = module {

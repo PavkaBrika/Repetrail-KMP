@@ -301,13 +301,13 @@ flowchart TD
 > Свайп-действия в Compose Multiplatform могут иметь нюансы на iOS. Рекомендуется протестировать на обеих платформах. Если `SwipeToDismissBox` не работает корректно на iOS — использовать `anchoredDraggable` с ручной отрисовкой кнопок.
 
 **Файлы (новые):**
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/list/DeckListState.kt`
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/list/DeckListIntent.kt`
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/list/DeckListSideEffect.kt`
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/list/DeckListScreenModel.kt`
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/list/DeckListScreen.kt`
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/list/DeckListContent.kt`
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/list/DeckCard.kt`
+- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListState.kt`
+- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListIntent.kt`
+- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListSideEffect.kt`
+- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListScreenModel.kt`
+- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListScreen.kt`
+- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/screen/DeckListContent.kt`
+- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/screen/DeckCard.kt`
 
 **Готово, когда:** Список колод отображается из БД. Пустое состояние, loading, error работают. Свайп и контекстное меню отображают кнопки.
 

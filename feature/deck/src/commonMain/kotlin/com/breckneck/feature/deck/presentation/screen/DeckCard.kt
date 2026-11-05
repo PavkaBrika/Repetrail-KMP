@@ -1,4 +1,4 @@
-package com.breckneck.feature.deck.list
+package com.breckneck.feature.deck.presentation.screen
 
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column

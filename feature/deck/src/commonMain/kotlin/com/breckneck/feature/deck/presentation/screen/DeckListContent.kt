@@ -1,4 +1,4 @@
-package com.breckneck.feature.deck.list
+package com.breckneck.feature.deck.presentation.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.breckneck.core.domain.model.Deck
 import com.breckneck.core.ui.designsystem.theme.RepetrailTheme
+import com.breckneck.feature.deck.presentation.DeckListIntent
+import com.breckneck.feature.deck.presentation.DeckListState
+import com.breckneck.feature.deck.presentation.DeckListUiState
 import org.jetbrains.compose.resources.stringResource
 import repetrail.core.ui.designsystem.generated.resources.Res
 import repetrail.core.ui.designsystem.generated.resources.deck_list_create_button
@@ -215,8 +218,9 @@ fun DeckListContent(
         }
     }
 
-    val deckToDelete = state.deckToDeleteConfirmation
-    if (deckToDelete != null) {
+    val deleteDeckDialogState = state.deleteDeckDialogState
+    val deckToDelete = deleteDeckDialogState.deckToDelete
+    if (deleteDeckDialogState.isVisible && deckToDelete != null) {
         ModalBottomSheet(
             onDismissRequest = { onIntent(DeckListIntent.CancelDelete) },
             containerColor = RepetrailTheme.colors.surface,
@@ -287,28 +291,29 @@ fun DeckListContent(
 private fun DeckListContentPreview() {
     RepetrailTheme {
         DeckListContent(
-            state = DeckListState(
-                uiState = DeckListUiState.Content(
-                    decks = listOf(
-                        Deck(
-                            id = 1L,
-                            name = "English · Travel Phrases",
-                            description = "Airport, hotel, and restaurant basics",
-                            cardCount = 30,
-                            createdAt = 0L,
-                            updatedAt = 0L,
-                        ),
-                        Deck(
-                            id = 2L,
-                            name = "Biology · Cell Structure",
-                            description = "Organelles, mitochondria, DNA",
-                            cardCount = 15,
-                            createdAt = 0L,
-                            updatedAt = 0L,
+            state = DeckListState.initial()
+                .copy(
+                    uiState = DeckListUiState.Content(
+                        decks = listOf(
+                            Deck(
+                                id = 1L,
+                                name = "English · Travel Phrases",
+                                description = "Airport, hotel, and restaurant basics",
+                                cardCount = 30,
+                                createdAt = 0L,
+                                updatedAt = 0L,
+                            ),
+                            Deck(
+                                id = 2L,
+                                name = "Biology · Cell Structure",
+                                description = "Organelles, mitochondria, DNA",
+                                cardCount = 15,
+                                createdAt = 0L,
+                                updatedAt = 0L,
+                            ),
                         ),
                     ),
                 ),
-            ),
             onIntent = {},
             snackbarHostState = SnackbarHostState(),
         )
@@ -320,9 +325,7 @@ private fun DeckListContentPreview() {
 private fun DeckListContentEmptyPreview() {
     RepetrailTheme {
         DeckListContent(
-            state = DeckListState(
-                uiState = DeckListUiState.Empty,
-            ),
+            state = DeckListState.initial().copy(uiState = DeckListUiState.Empty),
             onIntent = {},
             snackbarHostState = SnackbarHostState(),
         )
@@ -334,9 +337,8 @@ private fun DeckListContentEmptyPreview() {
 private fun DeckListContentErrorPreview() {
     RepetrailTheme {
         DeckListContent(
-            state = DeckListState(
-                uiState = DeckListUiState.Error(message = "Failed to load decks"),
-            ),
+            state = DeckListState.initial()
+                .copy(uiState = DeckListUiState.Error(message = "Failed to load decks")),
             onIntent = {},
             snackbarHostState = SnackbarHostState(),
         )

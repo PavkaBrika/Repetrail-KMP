@@ -1,4 +1,4 @@
-package com.breckneck.feature.deck.list
+package com.breckneck.feature.deck.presentation
 
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
+import com.breckneck.feature.deck.presentation.screen.DeckListContent
 import repetrail.core.ui.designsystem.generated.resources.Res
 import repetrail.core.ui.designsystem.generated.resources.deck_list_undo_snackbar_action
 import repetrail.core.ui.designsystem.generated.resources.deck_list_undo_snackbar_message
