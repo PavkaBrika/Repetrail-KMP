@@ -22,8 +22,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -55,15 +53,11 @@ import repetrail.core.ui.designsystem.generated.resources.deck_list_title
 fun DeckListContent(
     state: DeckListState,
     onIntent: (DeckListIntent) -> Unit,
-    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = RepetrailTheme.colors.background,
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onIntent(DeckListIntent.CreateDeckClicked) },
@@ -315,7 +309,6 @@ private fun DeckListContentPreview() {
                     ),
                 ),
             onIntent = {},
-            snackbarHostState = SnackbarHostState(),
         )
     }
 }
@@ -327,7 +320,6 @@ private fun DeckListContentEmptyPreview() {
         DeckListContent(
             state = DeckListState.initial().copy(uiState = DeckListUiState.Empty),
             onIntent = {},
-            snackbarHostState = SnackbarHostState(),
         )
     }
 }
@@ -340,7 +332,6 @@ private fun DeckListContentErrorPreview() {
             state = DeckListState.initial()
                 .copy(uiState = DeckListUiState.Error(message = "Failed to load decks")),
             onIntent = {},
-            snackbarHostState = SnackbarHostState(),
         )
     }
 }

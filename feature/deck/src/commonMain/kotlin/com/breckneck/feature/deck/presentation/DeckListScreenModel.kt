@@ -9,9 +9,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -63,10 +60,6 @@ class DeckListScreenModel(
             }
 
             DeckListIntent.ConfirmDelete -> confirmDelete()
-
-            is DeckListIntent.UndoDelete -> resetAwaitDeletion()
-
-            is DeckListIntent.SnackbarDismissed -> tryDeleteAwaitingDeck()
         }
     }
 
@@ -76,14 +69,7 @@ class DeckListScreenModel(
         observeJob = screenModelScope.launch {
             mutableState.update { it.copy(uiState = DeckListUiState.Loading) }
 
-            combine(
-                observeDecksUseCase(),
-                state
-                    .map { it.deckAwaitingDeletion?.id }
-                    .distinctUntilChanged(),
-            ) { allDecks, awaitingDeletionId ->
-                allDecks.filterNot { it.id == awaitingDeletionId }
-            }
+            observeDecksUseCase()
                 .catch { throwable ->
                     mutableState.update {
                         it.copy(
@@ -93,13 +79,13 @@ class DeckListScreenModel(
                         )
                     }
                 }
-                .collect { visibleDecks ->
+                .collect { decks ->
                     mutableState.update {
                         it.copy(
-                            uiState = if (visibleDecks.isEmpty()) {
+                            uiState = if (decks.isEmpty()) {
                                 DeckListUiState.Empty
                             } else {
-                                DeckListUiState.Content(decks = visibleDecks)
+                                DeckListUiState.Content(decks = decks)
                             },
                         )
                     }
@@ -108,33 +94,24 @@ class DeckListScreenModel(
     }
 
     private fun confirmDelete() = screenModelScope.launch {
-        tryDeleteAwaitingDeck()
-
         val deck = state.value.deleteDeckDialogState.deckToDelete ?: return@launch
 
         mutableState.update {
-            it.copy(
-                deckAwaitingDeletion = state.value.deleteDeckDialogState.deckToDelete,
-                deleteDeckDialogState = DeleteDeckDialogState.initial()
-            )
+            it.copy(deleteDeckDialogState = DeleteDeckDialogState.initial())
         }
 
-        _sideEffect.trySend(DeckListSideEffect.ShowUndoSnackbar(deck.name))
-    }
-
-    private fun tryDeleteAwaitingDeck() = screenModelScope.launch {
-        val deck = state.value.deckAwaitingDeletion ?: return@launch
-
-        deleteDeckUseCase(deck.id)
-        resetAwaitDeletion()
-    }
-
-    private fun resetAwaitDeletion() {
-        mutableState.update { it.copy(deckAwaitingDeletion = null) }
-    }
-
-    override fun onDispose() {
-        tryDeleteAwaitingDeck()
-        super.onDispose()
+        try {
+            deleteDeckUseCase(deck.id)
+        } catch (exception: CancellationException) {
+            throw exception
+        } catch (exception: Exception) {
+            mutableState.update {
+                it.copy(
+                    uiState = DeckListUiState.Error(
+                        message = exception.message ?: "Не удалось удалить колоду",
+                    ),
+                )
+            }
+        }
     }
 }

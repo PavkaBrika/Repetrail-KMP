@@ -10,6 +10,4 @@ sealed interface DeckListIntent {
     data class DeleteDeckClicked(val deck: Deck) : DeckListIntent
     data object ConfirmDelete : DeckListIntent
     data object CancelDelete : DeckListIntent
-    data object UndoDelete : DeckListIntent
-    data object SnackbarDismissed : DeckListIntent
 }

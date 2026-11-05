@@ -38,7 +38,7 @@ flowchart TD
     T5["2.5 DI: регистрация repository, use cases, screen models"]
     T6["2.6 Экран списка колод (DeckListScreen)"]
     T7["2.7 Экран создания/редактирования (DeckFormScreen)"]
-    T8["2.8 Удаление с Undo"]
+    T8["2.8 Удаление с Undo (отложено)"]
     T9["2.9 Диалоги и UX"]
     T10["2.10 Интеграция в навигацию"]
     T11["2.11 Верификация"]
@@ -49,11 +49,10 @@ flowchart TD
     T4 --> T5
     T5 --> T6
     T5 --> T7
-    T6 --> T8
+    T6 -.-> T8
     T7 --> T9
     T6 --> T10
     T7 --> T10
-    T8 --> T11
     T9 --> T11
     T10 --> T11
 ```
@@ -236,7 +235,7 @@ flowchart TD
       val decks: List<Deck> = emptyList(),
       val isLoading: Boolean = true,
       val error: String? = null,
-      val pendingDeleteDeck: Deck? = null,  // колода, ожидающая физического удаления (undo)
+      val deleteDeckDialogState: DeleteDeckDialogState = DeleteDeckDialogState.initial(),
   )
   ```
 - [ ] Создать `DeckListIntent`:
@@ -249,8 +248,6 @@ flowchart TD
       data class DeleteDeckClicked(val deck: Deck) : DeckListIntent
       data object ConfirmDelete : DeckListIntent
       data object CancelDelete : DeckListIntent
-      data object UndoDelete : DeckListIntent
-      data object SnackbarDismissed : DeckListIntent  // snackbar undo истёк
   }
   ```
 - [ ] Создать `DeckListSideEffect`:
@@ -259,7 +256,6 @@ flowchart TD
       data class NavigateToDeckForm(val deckId: Long? = null) : DeckListSideEffect
       data class NavigateToDeckDetail(val deckId: Long) : DeckListSideEffect
       data class ShowDeleteConfirmation(val deck: Deck, val cardCount: Int) : DeckListSideEffect
-      data class ShowUndoSnackbar(val deckName: String) : DeckListSideEffect
       data class ShowCreatedSnackbar(val deckName: String) : DeckListSideEffect
   }
   ```
@@ -269,7 +265,7 @@ flowchart TD
 - [ ] Создать `DeckListScreenModel`:
   - В `init {}`: подписка на `observeDecksUseCase()` → обновление state
   - `onIntent()`: обработка всех интентов
-  - Логика отложенного удаления: при `ConfirmDelete` — скрыть из state, отправить `ShowUndoSnackbar`; при `SnackbarDismissed` — физически удалить из БД; при `UndoDelete` — вернуть в state
+  - Удаление: `DeleteDeckClicked` открывает bottom sheet подтверждения; `ConfirmDelete` сразу вызывает `deleteDeckUseCase(id)`, список обновляется через observer БД. Отложенное удаление и undo сейчас не реализуются (см. 2.8).
 
 #### 2.6.3. UI (Composable)
 
@@ -397,25 +393,28 @@ flowchart TD
 
 ---
 
-### 2.8. Удаление с Undo
+### 2.8. Удаление с Undo — отложено
 
-**Зачем:** Реализовать безопасное удаление колоды с возможностью отмены (undo через Snackbar).
+**Статус: не выполнено.** Принято другое решение для текущей реализации: оставить bottom sheet подтверждения и сразу удалять колоду из БД после нажатия «Удалить». Snackbar, undo и отложенное удаление убраны. Возможность отмены планируется добавить в будущем отдельной задачей; она не блокирует завершение текущего шага.
 
-- [ ] Реализовать **стратегию отложенного удаления** в `DeckListScreenModel`:
-  1. Пользователь подтверждает удаление → колода сохраняется в `pendingDeleteDeck` state, убирается из отображаемого списка (фильтруется в state)
-  2. Отправляется `ShowUndoSnackbar` SideEffect
-  3. Snackbar показывается с кнопкой «Отменить» (undo) на ~5 секунд
-  4. **Если «Отменить» нажато:** `UndoDelete` → `pendingDeleteDeck = null`, колода возвращается в список
-  5. **Если Snackbar исчез (таймаут):** `SnackbarDismissed` → физическое удаление из БД через `deleteDeckUseCase(id)`, `pendingDeleteDeck = null`
-- [ ] Убедиться, что при выходе с экрана (смена таба) `pendingDeleteDeck` удаляется физически (в `onDispose` ScreenModel или при `onCleared`)
-- [ ] Snackbar показывать через `SnackbarHostState` в `DeckListContent` (Material3)
-- [ ] Учесть: при удалении последовательно нескольких колод — предыдущая удаляется физически перед показом нового Snackbar
+**Текущее поведение:**
+- «Удалить» в меню колоды открывает bottom sheet с подтверждением.
+- «Отмена» или закрытие bottom sheet не изменяет БД.
+- Подтверждение сразу вызывает `DeleteDeckUseCase`; список обновляется через observer БД.
+- Pending-состояние, таймер snackbar и удаление в `onDispose` не используются.
 
-**Файлы (модификация):**
-- `feature/deck/src/commonMain/.../DeckListScreenModel.kt`
-- `feature/deck/src/commonMain/.../DeckListContent.kt`
+**План на будущее (не реализован):**
+- [ ] Добавить snackbar с кнопкой «Отменить» и механизм отмены удаления.
+- [ ] Определить момент окончательного удаления из БД и поведение при уходе с экрана.
+- [ ] Обеспечить корректную работу нескольких последовательных удалений: ответ каждого snackbar относится к своей колоде.
+- [ ] Проверить отмену, истечение времени, ошибки БД и уход с экрана.
 
-**Готово, когда:** Удаление колоды показывает Snackbar, undo возвращает колоду, без undo колода удаляется из БД.
+**Файлы будущей доработки:**
+- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListScreenModel.kt`
+- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListScreen.kt`
+- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/screen/DeckListContent.kt`
+
+**Критерий будущего завершения:** Snackbar позволяет отменить удаление, а без отмены колода удаляется из БД.
 
 ---
 
@@ -490,8 +489,9 @@ flowchart TD
 - [ ] **Пустое имя:** кнопка «Сохранить» не активна, показывается ошибка «Введите название колоды»
 - [ ] **Список из БД:** созданные колоды отображаются после перезапуска приложения
 - [ ] **Редактирование:** свайп → «Редактировать» → изменить → Сохранить → изменения видны
-- [ ] **Удаление:** свайп → «Удалить» → диалог → подтвердить → Snackbar → колода удалена
-- [ ] **Undo:** Snackbar → «Отменить» → колода возвращается в список
+- [ ] **Удаление:** свайп или контекстное меню → «Удалить» → bottom sheet → подтвердить → колода сразу удаляется из БД, список обновляется
+- [ ] **Отмена подтверждения:** закрыть bottom sheet или нажать «Отмена» → колода остаётся в БД
+- [ ] **Undo (отложено, не выполнено):** добавить и проверить в будущем в рамках 2.8
 - [ ] **Unsaved changes:** создать колоду → ввести текст → Back → диалог «Отменить изменения?»
 - [ ] **Empty state:** нет колод → иллюстрация + «Пока нет ни одной колоды» + кнопка «Создать колоду»
 - [ ] **Долгое нажатие:** контекстное меню с «Редактировать» и «Удалить»

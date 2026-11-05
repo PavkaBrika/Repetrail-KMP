@@ -11,13 +11,11 @@ sealed interface DeckListUiState {
 
 data class DeckListState(
     val uiState: DeckListUiState,
-    val deckAwaitingDeletion: Deck?,
     val deleteDeckDialogState: DeleteDeckDialogState,
 ) {
     companion object {
         fun initial() = DeckListState(
             uiState = DeckListUiState.Loading,
-            deckAwaitingDeletion = null,
             deleteDeckDialogState = DeleteDeckDialogState.initial()
         )
     }
