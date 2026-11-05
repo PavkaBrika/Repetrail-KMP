@@ -1,0 +1,24 @@
+<resources>
+    <!-- Deck List Screen -->
+    <string name="deck_list_eyebrow">ТВОЯ КАРТОТЕКА</string>
+    <string name="deck_list_title">Колоды</string>
+    <string name="deck_list_subtitle">Коллекции ваших карточек для повторения.</string>
+    <string name="deck_list_empty_title">Пока нет ни одной колоды</string>
+    <string name="deck_list_empty_subtitle">Создайте свою первую колоду с карточками, чтобы начать обучение.</string>
+    <string name="deck_list_create_button">Создать колоду</string>
+    <string name="deck_list_retry_button">Попробовать снова</string>
+    <string name="deck_list_action_edit">Редактировать</string>
+    <string name="deck_list_action_delete">Удалить</string>
+    <string name="deck_list_delete_dialog_title">Удалить колоду?</string>
+    <string name="deck_list_delete_dialog_message">Колода "%1$s" и все её карточки (%2$d) будут удалены. Это нельзя отменить.</string>
+    <string name="deck_list_delete_dialog_cancel">Отмена</string>
+    <string name="deck_list_delete_dialog_confirm">Удалить</string>
+    <string name="deck_list_undo_snackbar_message">Колода "%1$s" удалена</string>
+    <string name="deck_list_undo_snackbar_action">Отменить</string>
+
+    <!-- Deck Card Quantities -->
+    <string name="deck_card_count_zero">0 карточек</string>
+    <string name="deck_card_count_one">%1$d карточка</string>
+    <string name="deck_card_count_few">%1$d карточки</string>
+    <string name="deck_card_count_many">%1$d карточек</string>
+</resources>

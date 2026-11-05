@@ -1,0 +1,24 @@
+<resources>
+    <!-- Deck List Screen -->
+    <string name="deck_list_eyebrow">YOUR COLLECTION</string>
+    <string name="deck_list_title">Decks</string>
+    <string name="deck_list_subtitle">Collections of your flashcards for repetition.</string>
+    <string name="deck_list_empty_title">No decks yet</string>
+    <string name="deck_list_empty_subtitle">Create your first deck with flashcards to start learning.</string>
+    <string name="deck_list_create_button">Create Deck</string>
+    <string name="deck_list_retry_button">Try Again</string>
+    <string name="deck_list_action_edit">Edit</string>
+    <string name="deck_list_action_delete">Delete</string>
+    <string name="deck_list_delete_dialog_title">Delete deck?</string>
+    <string name="deck_list_delete_dialog_message">Deck "%1$s" and all its flashcards (%2$d) will be deleted. This action cannot be undone.</string>
+    <string name="deck_list_delete_dialog_cancel">Cancel</string>
+    <string name="deck_list_delete_dialog_confirm">Delete</string>
+    <string name="deck_list_undo_snackbar_message">Deck "%1$s" deleted</string>
+    <string name="deck_list_undo_snackbar_action">Undo</string>
+
+    <!-- Deck Card Quantities -->
+    <string name="deck_card_count_zero">0 cards</string>
+    <string name="deck_card_count_one">%1$d card</string>
+    <string name="deck_card_count_few">%1$d cards</string>
+    <string name="deck_card_count_many">%1$d cards</string>
+</resources>
