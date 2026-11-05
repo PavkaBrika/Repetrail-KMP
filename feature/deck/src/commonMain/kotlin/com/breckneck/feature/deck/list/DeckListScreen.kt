@@ -23,7 +23,7 @@ class DeckListScreen : Screen {
         val state by screenModel.state.collectAsState()
         val snackbarHostState = remember { SnackbarHostState() }
 
-        LaunchedEffect(key1 = screenModel) {
+        LaunchedEffect(screenModel) {
             screenModel.sideEffect.collect { effect ->
                 when (effect) {
                     is DeckListSideEffect.NavigateToDeckForm -> {
