@@ -119,6 +119,10 @@ fun DecksContent(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
+                        DeckEmptyIllustration()
+
+                        Spacer(Modifier.height(RepetrailTheme.dimensions.spacings.large))
+
                         Text(
                             text = stringResource(Res.string.deck_list_empty_title),
                             style = RepetrailTheme.typography.titleMedium,
