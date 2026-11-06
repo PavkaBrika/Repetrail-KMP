@@ -12,7 +12,7 @@ import com.breckneck.feature.deck.form.DeckFormScreenModel
 import com.breckneck.feature.deck.form.DeckFormSideEffect
 import org.koin.core.parameter.parametersOf
 
-data class DeckFormScreen(val deckId: Long? = null) : Screen {
+internal data class DeckFormScreen(val deckId: Long? = null) : Screen {
 
     override val key: String get() = "screen.deck-form-${deckId ?: "new"}"
 

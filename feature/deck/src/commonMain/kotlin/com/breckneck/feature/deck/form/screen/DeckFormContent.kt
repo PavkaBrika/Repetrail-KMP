@@ -14,10 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -27,6 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.breckneck.core.ui.designsystem.theme.RepetrailTheme
@@ -49,8 +51,9 @@ import repetrail.core.ui.designsystem.generated.resources.deck_form_save_button
 import repetrail.core.ui.designsystem.generated.resources.deck_form_title_create
 import repetrail.core.ui.designsystem.generated.resources.deck_form_title_edit
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeckFormContent(
+internal fun DeckFormContent(
     state: DeckFormState,
     onIntent: (DeckFormIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -175,25 +178,40 @@ fun DeckFormContent(
     }
 
     if (state.showDiscardDialog) {
-        AlertDialog(
+        ModalBottomSheet(
             onDismissRequest = { onIntent(DeckFormIntent.CancelDiscard) },
-            title = {
+            containerColor = RepetrailTheme.colors.surface,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = RepetrailTheme.dimensions.spacings.large,
+                        vertical = RepetrailTheme.dimensions.spacings.medium,
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Text(
                     text = stringResource(Res.string.deck_form_discard_dialog_title),
                     style = RepetrailTheme.typography.headingMedium,
                     color = RepetrailTheme.colors.ink,
+                    textAlign = TextAlign.Center,
                 )
-            },
-            text = {
+
+                Spacer(Modifier.height(RepetrailTheme.dimensions.spacings.small))
+
                 Text(
                     text = stringResource(Res.string.deck_form_discard_dialog_message),
                     style = RepetrailTheme.typography.bodyMedium,
                     color = RepetrailTheme.colors.muted,
+                    textAlign = TextAlign.Center,
                 )
-            },
-            confirmButton = {
+
+                Spacer(Modifier.height(RepetrailTheme.dimensions.spacings.large))
+
                 Button(
                     onClick = { onIntent(DeckFormIntent.ConfirmDiscard) },
+                    modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = RepetrailTheme.colors.accent),
                 ) {
                     Text(
@@ -201,10 +219,12 @@ fun DeckFormContent(
                         style = RepetrailTheme.typography.bodyMedium,
                     )
                 }
-            },
-            dismissButton = {
+
+                Spacer(Modifier.height(RepetrailTheme.dimensions.spacings.small))
+
                 OutlinedButton(
                     onClick = { onIntent(DeckFormIntent.CancelDiscard) },
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
                         text = stringResource(Res.string.deck_form_discard_dialog_cancel),
@@ -212,9 +232,10 @@ fun DeckFormContent(
                         color = RepetrailTheme.colors.ink,
                     )
                 }
-            },
-            containerColor = RepetrailTheme.colors.surface,
-        )
+
+                Spacer(Modifier.height(RepetrailTheme.dimensions.spacings.medium))
+            }
+        }
     }
 }
 
