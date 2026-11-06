@@ -59,10 +59,6 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             api(libs.koin.core)
             implementation(libs.koin.compose)
-            implementation(libs.voyager.navigator)
-            implementation(libs.voyager.tabNavigator)
-            implementation(libs.voyager.screenmodel)
-            implementation(libs.voyager.koin)
             implementation(libs.kotlinx.coroutines.core)
         }
         commonTest.dependencies {
