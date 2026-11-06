@@ -64,6 +64,7 @@ fun DecksContent(
                 containerColor = RepetrailTheme.colors.accent,
                 contentColor = RepetrailTheme.colors.surface,
                 shape = RepetrailTheme.shapes.pill,
+                modifier = Modifier.padding(bottom = 84.dp),
             ) {
                 Text(
                     text = "+",

@@ -7,6 +7,8 @@ description: Create or modify Jetpack Compose and Compose Multiplatform screens 
 
 Apply these rules when creating or changing Repetrail Compose screens and components. Inspect the affected rendering code, its state and navigation boundary, available components, and current tokens first. Existing UI can help locate behavior and reusable components, but existing violations are not precedents for new recommendations. Keep changes within the requested scope; do not repair unrelated UI along the way.
 
+For screen layout, visual styling, floating controls, or system-bar geometry, also apply [Repetrail Bubble Design](../repetrail-bubble-design/SKILL.md). It defines the app's edge-to-edge visual language, circular back/overflow bubbles, optional collapsing title, and FAB clearance above the floating bottom navigation. The content viewport extends behind system bars; interactive controls stay within safe bounds.
+
 ## Design-system sources of truth
 
 Paths below are relative to this skill file. Read the relevant sources before choosing styling values; do not duplicate their token definitions here.
