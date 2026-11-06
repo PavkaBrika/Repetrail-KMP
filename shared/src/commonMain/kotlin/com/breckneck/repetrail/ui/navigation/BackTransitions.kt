@@ -5,6 +5,8 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavBackStackEntry
 
+internal expect val forwardEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition
+internal expect val forwardExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition
 internal expect val backEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition
 internal expect val backExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition
 internal expect val predictiveBackEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.(Int) -> EnterTransition

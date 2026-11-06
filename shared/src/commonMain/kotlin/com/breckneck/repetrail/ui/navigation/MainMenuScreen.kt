@@ -35,19 +35,24 @@ fun MainMenuScreen() {
         val decksNavController = rememberNavController()
         val menuNavController = rememberNavController()
         var selectedTabName by rememberSaveable { mutableStateOf(MainTab.Tasks.name) }
-        val selectedTab = MainTab.entries.firstOrNull { it.name == selectedTabName } ?: MainTab.Tasks
+        val selectedTab = MainTab.entries
+            .firstOrNull { it.name == selectedTabName }
+            ?: MainTab.Tasks
         val saveableStateHolder = rememberSaveableStateHolder()
 
-        Surface(modifier = Modifier.fillMaxSize(), color = RepetrailTheme.colors.background) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = RepetrailTheme.colors.background
+        ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .windowInsetsPadding(
-                            WindowInsets.safeDrawing.only(
-                                WindowInsetsSides.Top + WindowInsetsSides.Horizontal,
-                            ),
-                        ),
+//                        .windowInsetsPadding(
+//                            WindowInsets.safeDrawing.only(
+//                                WindowInsetsSides.Top + WindowInsetsSides.Horizontal,
+//                            ),
+//                        ),
                 ) {
                     saveableStateHolder.SaveableStateProvider(selectedTab.name) {
                         when (selectedTab) {
@@ -56,6 +61,8 @@ fun MainMenuScreen() {
                                     navController = tasksNavController,
                                     startDestination = TasksRoute,
                                     modifier = Modifier.fillMaxSize(),
+                                    enterTransition = forwardEnterTransition,
+                                    exitTransition = forwardExitTransition,
                                     popEnterTransition = backEnterTransition,
                                     popExitTransition = backExitTransition,
                                     predictivePopEnterTransition = predictiveBackEnterTransition,
@@ -72,6 +79,8 @@ fun MainMenuScreen() {
                                     navController = decksNavController,
                                     startDestination = DeckListRoute,
                                     modifier = Modifier.fillMaxSize(),
+                                    enterTransition = forwardEnterTransition,
+                                    exitTransition = forwardExitTransition,
                                     popEnterTransition = backEnterTransition,
                                     popExitTransition = backExitTransition,
                                     predictivePopEnterTransition = predictiveBackEnterTransition,
@@ -86,6 +95,8 @@ fun MainMenuScreen() {
                                     navController = menuNavController,
                                     startDestination = MenuRoute,
                                     modifier = Modifier.fillMaxSize(),
+                                    enterTransition = forwardEnterTransition,
+                                    exitTransition = forwardExitTransition,
                                     popEnterTransition = backEnterTransition,
                                     popExitTransition = backExitTransition,
                                     predictivePopEnterTransition = predictiveBackEnterTransition,

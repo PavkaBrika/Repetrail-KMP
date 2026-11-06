@@ -1,5 +1,6 @@
 package com.breckneck.repetrail.ui.screens.menu
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -24,6 +25,7 @@ internal fun AboutContent(onBackClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(RepetrailTheme.colors.background)
             .verticalScroll(rememberScrollState())
             .padding(
                 start = 22.dp,

@@ -6,6 +6,12 @@ import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.DefaultNavTransitions
 
+internal actual val forwardEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
+    DefaultNavTransitions.enterTransition
+
+internal actual val forwardExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
+    DefaultNavTransitions.exitTransition
+
 internal actual val backEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
     DefaultNavTransitions.popEnterTransition(DefaultNavTransitions.enterTransition)
 
