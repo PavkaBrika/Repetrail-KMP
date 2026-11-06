@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -54,6 +55,8 @@ fun DecksContent(
     onIntent: (DeckListIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val listState = rememberLazyListState()
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = RepetrailTheme.colors.background,
@@ -155,6 +158,7 @@ fun DecksContent(
 
                 is DeckListUiState.Content -> {
                     LazyColumn(
+                        state = listState,
                         modifier = Modifier.fillMaxSize(),
                         // 112.dp clearance above the floating action button and bottom navigation bar
                         contentPadding = PaddingValues(

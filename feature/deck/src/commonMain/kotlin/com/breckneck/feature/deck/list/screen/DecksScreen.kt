@@ -2,22 +2,24 @@ package com.breckneck.feature.deck.list.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.breckneck.feature.deck.list.DeckListSideEffect
 import com.breckneck.feature.deck.list.DeckListViewModel
 
-class DecksScreen(
-    private val viewModel: DeckListViewModel,
-    private val onNavigateToDeckForm: (Long?) -> Unit,
-) : Screen {
+@Composable
+internal fun DecksScreen(
+    viewModel: DeckListViewModel,
+    onNavigateToDeckForm: (Long?) -> Unit,
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    @Composable
-    override fun Content() {
-        val state by viewModel.state.collectAsState()
-
-        LaunchedEffect(viewModel) {
+    LaunchedEffect(viewModel, lifecycle) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             viewModel.sideEffect.collect { effect ->
                 when (effect) {
                     is DeckListSideEffect.NavigateToDeckForm -> {
@@ -30,10 +32,10 @@ class DecksScreen(
                 }
             }
         }
-
-        DecksContent(
-            state = state,
-            onIntent = viewModel::onIntent,
-        )
     }
+
+    DecksContent(
+        state = state,
+        onIntent = viewModel::onIntent,
+    )
 }

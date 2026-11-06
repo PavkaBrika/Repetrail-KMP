@@ -3,7 +3,6 @@ package com.breckneck.feature.deck.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import cafe.adriel.voyager.navigator.Navigator
 import com.breckneck.feature.deck.form.DeckFormViewModel
 import com.breckneck.feature.deck.form.screen.DeckFormScreen
 import com.breckneck.feature.deck.list.DeckListViewModel
@@ -17,19 +16,17 @@ fun NavGraphBuilder.deckDestinations(navController: NavHostController) {
             extras = entry.defaultViewModelCreationExtras,
         )
 
-        Navigator(
-            DecksScreen(
-                viewModel = viewModel,
-                onNavigateToDeckForm = { deckId ->
-                    val route = when (deckId) {
-                        null -> DeckFormRoute()
-                        else -> DeckFormRoute(deckId)
-                    }
-                    navController.navigate(route) {
-                        launchSingleTop = true
-                    }
-                },
-            ),
+        DecksScreen(
+            viewModel = viewModel,
+            onNavigateToDeckForm = { deckId ->
+                val route = when (deckId) {
+                    null -> DeckFormRoute()
+                    else -> DeckFormRoute(deckId)
+                }
+                navController.navigate(route) {
+                    launchSingleTop = true
+                }
+            },
         )
     }
     composable<DeckFormRoute> { entry ->
@@ -38,11 +35,9 @@ fun NavGraphBuilder.deckDestinations(navController: NavHostController) {
             extras = entry.defaultViewModelCreationExtras,
         )
 
-        Navigator(
-            DeckFormScreen(
-                viewModel = viewModel,
-                onNavigateBack = { navController.popBackStack() },
-            ),
+        DeckFormScreen(
+            viewModel = viewModel,
+            onNavigateBack = { navController.popBackStack() },
         )
     }
 }
