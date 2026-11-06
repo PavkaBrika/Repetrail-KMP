@@ -60,7 +60,7 @@ class DeckFormScreenModel(
     }
 
     private fun loadDeck(id: Long) = screenModelScope.launch {
-        mutableState.update { it.copy(isLoading = true) }
+        mutableState.update { it.copy(uiState = DeckFormUiState.Loading) }
         try {
             val deck = getDeckByIdUseCase(id)
             if (deck != null) {
@@ -70,16 +70,16 @@ class DeckFormScreenModel(
                         description = deck.description.orEmpty(),
                         originalName = deck.name,
                         originalDescription = deck.description.orEmpty(),
-                        isLoading = false,
+                        uiState = DeckFormUiState.Content,
                     )
                 }
             } else {
-                mutableState.update { it.copy(isLoading = false) }
+                mutableState.update { it.copy(uiState = DeckFormUiState.Content) }
             }
         } catch (exception: CancellationException) {
             throw exception
         } catch (_: Exception) {
-            mutableState.update { it.copy(isLoading = false) }
+            mutableState.update { it.copy(uiState = DeckFormUiState.Content) }
         }
     }
 
@@ -90,7 +90,7 @@ class DeckFormScreenModel(
             return@launch
         }
 
-        mutableState.update { it.copy(isSaving = true) }
+        mutableState.update { it.copy(uiState = DeckFormUiState.Saving) }
 
         try {
             saveDeckUseCase(
@@ -110,7 +110,7 @@ class DeckFormScreenModel(
         } catch (exception: CancellationException) {
             throw exception
         } catch (_: Exception) {
-            mutableState.update { it.copy(isSaving = false) }
+            mutableState.update { it.copy(uiState = DeckFormUiState.Content) }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.breckneck.feature.deck.presentation
+package com.breckneck.feature.deck.list
 
 sealed interface DeckListSideEffect {
     data class NavigateToDeckForm(val deckId: Long? = null) : DeckListSideEffect

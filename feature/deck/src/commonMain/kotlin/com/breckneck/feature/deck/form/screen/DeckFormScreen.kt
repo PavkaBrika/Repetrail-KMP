@@ -1,4 +1,4 @@
-package com.breckneck.feature.deck.presentation
+package com.breckneck.feature.deck.form.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,32 +8,35 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.breckneck.feature.deck.form.DeckFormScreen
-import com.breckneck.feature.deck.presentation.screen.DecksContent
+import com.breckneck.feature.deck.form.DeckFormScreenModel
+import com.breckneck.feature.deck.form.DeckFormSideEffect
+import org.koin.core.parameter.parametersOf
 
-class DecksScreen : Screen {
+data class DeckFormScreen(val deckId: Long? = null) : Screen {
+
+    override val key: String get() = "screen.deck-form-${deckId ?: "new"}"
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val screenModel = koinScreenModel<DeckListScreenModel>()
+        val screenModel = koinScreenModel<DeckFormScreenModel> { parametersOf(deckId) }
         val state by screenModel.state.collectAsState()
 
         LaunchedEffect(screenModel) {
             screenModel.sideEffect.collect { effect ->
                 when (effect) {
-                    is DeckListSideEffect.NavigateToDeckForm -> {
-                        navigator.push(DeckFormScreen(deckId = effect.deckId))
+                    is DeckFormSideEffect.DeckSaved -> {
+                        // Handled by NavigateBack
                     }
 
-                    is DeckListSideEffect.NavigateToDeckDetail -> {
-                        // Will be wired to DeckDetailScreen in step 3
+                    DeckFormSideEffect.NavigateBack -> {
+                        navigator.pop()
                     }
                 }
             }
         }
 
-        DecksContent(
+        DeckFormContent(
             state = state,
             onIntent = screenModel::onIntent,
         )

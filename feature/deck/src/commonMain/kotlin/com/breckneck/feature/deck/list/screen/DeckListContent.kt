@@ -1,4 +1,4 @@
-package com.breckneck.feature.deck.presentation.screen
+package com.breckneck.feature.deck.list.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,9 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.breckneck.core.domain.model.Deck
 import com.breckneck.core.ui.designsystem.theme.RepetrailTheme
-import com.breckneck.feature.deck.presentation.DeckListIntent
-import com.breckneck.feature.deck.presentation.DeckListState
-import com.breckneck.feature.deck.presentation.DeckListUiState
+import com.breckneck.feature.deck.list.DeckListIntent
+import com.breckneck.feature.deck.list.DeckListState
+import com.breckneck.feature.deck.list.DeckListUiState
 import org.jetbrains.compose.resources.stringResource
 import repetrail.core.ui.designsystem.generated.resources.Res
 import repetrail.core.ui.designsystem.generated.resources.deck_list_create_button

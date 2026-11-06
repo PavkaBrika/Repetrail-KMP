@@ -1,4 +1,4 @@
-package com.breckneck.feature.deck.presentation
+package com.breckneck.feature.deck.list
 
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope

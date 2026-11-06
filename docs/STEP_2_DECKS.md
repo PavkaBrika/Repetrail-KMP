@@ -297,13 +297,13 @@ flowchart TD
 > Свайп-действия в Compose Multiplatform могут иметь нюансы на iOS. Рекомендуется протестировать на обеих платформах. Если `SwipeToDismissBox` не работает корректно на iOS — использовать `anchoredDraggable` с ручной отрисовкой кнопок.
 
 **Файлы (новые):**
-- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListState.kt`
-- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListIntent.kt`
-- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListSideEffect.kt`
-- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListScreenModel.kt`
-- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListScreen.kt`
-- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/screen/DeckListContent.kt`
-- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/screen/DeckCard.kt`
+- `list`
+- `list`
+- `list`
+- `list`
+- `list`
+- `list`
+- `list`
 
 **Готово, когда:** Список колод отображается из БД. Пустое состояние, loading, error работают. Свайп и контекстное меню отображают кнопки.
 
@@ -386,8 +386,8 @@ flowchart TD
 - `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/form/DeckFormIntent.kt`
 - `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/form/DeckFormSideEffect.kt`
 - `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/form/DeckFormScreenModel.kt`
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/form/DeckFormScreen.kt`
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/form/DeckFormContent.kt`
+- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/form/screen/DeckFormScreen.kt`
+- `../feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/form/screen/DeckFormContent.kt`
 
 **Готово, когда:** Можно создать новую колоду, она появляется в списке. Можно отредактировать существующую колоду.
 
@@ -410,9 +410,9 @@ flowchart TD
 - [ ] Проверить отмену, истечение времени, ошибки БД и уход с экрана.
 
 **Файлы будущей доработки:**
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListScreenModel.kt`
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/DeckListScreen.kt`
-- `feature/deck/src/commonMain/kotlin/com/breckneck/feature/deck/presentation/screen/DeckListContent.kt`
+- `list`
+- `list`
+- `list`
 
 **Критерий будущего завершения:** Snackbar позволяет отменить удаление, а без отмены колода удаляется из БД.
 

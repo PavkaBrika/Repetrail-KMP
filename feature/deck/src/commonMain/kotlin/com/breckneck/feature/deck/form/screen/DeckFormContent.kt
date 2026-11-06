@@ -1,4 +1,4 @@
-package com.breckneck.feature.deck.form
+package com.breckneck.feature.deck.form.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.breckneck.core.ui.designsystem.theme.RepetrailTheme
+import com.breckneck.feature.deck.form.DeckFormIntent
+import com.breckneck.feature.deck.form.DeckFormState
+import com.breckneck.feature.deck.form.DeckFormUiState
 import org.jetbrains.compose.resources.stringResource
 import repetrail.core.ui.designsystem.generated.resources.Res
 import repetrail.core.ui.designsystem.generated.resources.deck_form_back_button
@@ -56,7 +59,7 @@ fun DeckFormContent(
         modifier = modifier.fillMaxSize(),
         containerColor = RepetrailTheme.colors.background,
     ) { paddingValues ->
-        if (state.isLoading) {
+        if (state.uiState == DeckFormUiState.Loading) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -150,10 +153,10 @@ fun DeckFormContent(
                 Button(
                     onClick = { onIntent(DeckFormIntent.SaveClicked) },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = state.name.isNotBlank() && !state.isSaving,
+                    enabled = state.name.isNotBlank() && (state.uiState != DeckFormUiState.Saving),
                     colors = ButtonDefaults.buttonColors(containerColor = RepetrailTheme.colors.accent),
                 ) {
-                    if (state.isSaving) {
+                    if (state.uiState == DeckFormUiState.Saving) {
                         // Compact progress indicator sized for button height
                         CircularProgressIndicator(
                             modifier = Modifier.size(20.dp),

@@ -1,4 +1,4 @@
-package com.breckneck.feature.deck.presentation
+package com.breckneck.feature.deck.list
 
 import com.breckneck.core.domain.model.Deck
 
