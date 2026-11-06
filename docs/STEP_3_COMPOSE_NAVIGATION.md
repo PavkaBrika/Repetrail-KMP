@@ -54,7 +54,7 @@
 
 Исходные версии проекта: Kotlin `2.4.21`, Compose Multiplatform `1.12.2`, Koin `4.2.2`, AGP `9.1.1`.
 
-- [ ] Добавить в version catalog следующие зависимости:
+- [x] Добавить в version catalog следующие зависимости:
 
 | Артефакт | Версия |
 |---|---|
@@ -68,13 +68,13 @@
 
 Navigation, Lifecycle и Navigation Event взяты из состава [Compose Multiplatform 1.12.2](https://github.com/JetBrains/compose-multiplatform/releases/tag/v1.12.2). Версия Serialization соответствует примеру для [Kotlin 2.4.21](https://kotlinlang.org/docs/serialization-get-started.html).
 
-- [ ] Добавить plugin alias `org.jetbrains.kotlin.plugin.serialization` с `version.ref = "kotlin"`.
-- [ ] Объявить plugin alias в корневом Gradle-файле с `apply false`.
-- [ ] Применить Serialization plugin в `shared` и `feature:deck`.
-- [ ] В `shared/commonMain` подключить Navigation Compose и Serialization.
-- [ ] В `feature:deck/commonMain` подключить перечисленные зависимости для навигации, ViewModel, состояния и Back.
-- [ ] Для общих Compose API использовать мультиплатформенные артефакты JetBrains; импорты классов при этом остаются `androidx.*`.
-- [ ] Voyager пока оставить: удалить после перевода всех использований в пункте 3.7.
+- [x] Добавить plugin alias `org.jetbrains.kotlin.plugin.serialization` с `version.ref = "kotlin"`.
+- [x] Объявить plugin alias в корневом Gradle-файле с `apply false`.
+- [x] Применить Serialization plugin в `shared` и `feature:deck`.
+- [x] В `shared/commonMain` подключить Navigation Compose и Serialization.
+- [x] В `feature:deck/commonMain` подключить перечисленные зависимости для навигации, ViewModel, состояния и Back.
+- [x] Для общих Compose API использовать мультиплатформенные артефакты JetBrains; импорты классов при этом остаются `androidx.*`.
+- [x] Voyager пока оставить: удалить после перевода всех использований в пункте 3.7.
 
 **Готово, когда:** зависимости и плагины объявлены. Navigation 3, `NavDisplay` и entry decorators не подключены. Общего обновления toolchain нет.
 

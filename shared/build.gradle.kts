@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -48,6 +49,8 @@ kotlin {
             implementation(project(":core:domain"))
             implementation(project(":core:data"))
             implementation(project(":feature:deck"))
+            implementation(libs.navigation.compose)
+            implementation(libs.kotlinx.serialization.json)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
