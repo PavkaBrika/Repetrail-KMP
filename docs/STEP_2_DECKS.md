@@ -269,11 +269,11 @@ flowchart TD
 
 #### 2.6.3. UI (Composable)
 
-- [x] Создать `DeckListScreen` (Voyager `Screen`):
+- [x] Создать `DecksScreen` (Voyager `Screen`):
   - Получает `DeckListScreenModel` через `koinScreenModel()`
   - Собирает state и side effects по соглашению MVI
   - Делегирует отрисовку в `DeckListContent(state, onIntent)`
-- [x] Создать `DeckListContent` (stateless Composable):
+- [x] Создать `DecksContent` (stateless Composable):
   - **Loading:** skeleton-заглушки (мерцающие карточки колод)
   - **Empty:** иллюстрация + «Пока нет ни одной колоды» + кнопка «Создать колоду»
   - **Error:** «Что-то пошло не так» + кнопка «Попробовать снова»
@@ -289,7 +289,7 @@ flowchart TD
   - Кнопка «Редактировать» (✏️)
   - Кнопка «Удалить» (🗑)
   - Использовать `SwipeToDismissBox` из Material3 или кастомную реализацию через `anchoredDraggable`
-- [ ] Реализовать долгое нажатие → контекстное меню (DropdownMenu):
+- [x] Реализовать долгое нажатие → контекстное меню (DropdownMenu):
   - Редактировать
   - Удалить
 
@@ -315,7 +315,7 @@ flowchart TD
 
 #### 2.7.1. MVI-контракт
 
-- [ ] Создать `DeckFormState`:
+- [x] Создать `DeckFormState`:
   ```kotlin
   data class DeckFormState(
       val deckId: Long? = null,           // null = создание, non-null = редактирование
@@ -329,7 +329,7 @@ flowchart TD
       val originalDescription: String = "",
   )
   ```
-- [ ] Создать `DeckFormIntent`:
+- [x] Создать `DeckFormIntent`:
   ```kotlin
   sealed interface DeckFormIntent {
       data class NameChanged(val name: String) : DeckFormIntent
@@ -340,7 +340,7 @@ flowchart TD
       data object CancelDiscard : DeckFormIntent
   }
   ```
-- [ ] Создать `DeckFormSideEffect`:
+- [x] Создать `DeckFormSideEffect`:
   ```kotlin
   sealed interface DeckFormSideEffect {
       data class DeckSaved(val deckName: String, val isNew: Boolean) : DeckFormSideEffect
@@ -351,7 +351,7 @@ flowchart TD
 
 #### 2.7.2. ScreenModel
 
-- [ ] Создать `DeckFormScreenModel(deckId: Long?, getDeckByIdUseCase, saveDeckUseCase, timeProvider)`:
+- [x] Создать `DeckFormScreenModel(deckId: Long?, getDeckByIdUseCase, saveDeckUseCase, timeProvider)`:
   - В `init {}`: если `deckId != null` → загрузить данные колоды, заполнить state
   - `onIntent(NameChanged)` → обновить name, очистить nameError, пересчитать hasUnsavedChanges
   - `onIntent(DescriptionChanged)` → обновить description, пересчитать hasUnsavedChanges
@@ -362,11 +362,11 @@ flowchart TD
 
 #### 2.7.3. UI (Composable)
 
-- [ ] Создать `DeckFormScreen(deckId: Long?)` (Voyager `Screen` с data class, key = `"screen.deck-form-${deckId ?: "new"}"`):
+- [x] Создать `DeckFormScreen(deckId: Long?)` (Voyager `Screen` с data class, key = `"screen.deck-form-${deckId ?: "new"}"`):
   - Получает `DeckFormScreenModel` через `koinScreenModel()` с параметром `deckId`
   - Toolbar: ← Назад + заголовок «Новая колода» / «Редактирование колоды»
   - Обработка Android Back → `BackClicked` intent
-- [ ] Создать `DeckFormContent(state, onIntent)` (stateless Composable):
+- [x] Создать `DeckFormContent(state, onIntent)` (stateless Composable):
   - Поле «Название» (TextField, maxLength = 100):
     - Label: «Название колоды»
     - supportingText: nameError (если есть) — красным
@@ -435,8 +435,8 @@ flowchart TD
   - Обработка Android Back gesture и кнопки ← в toolbar
 - [ ] **Snackbar «Колода создана»:**
   - Текст: «Колода "{name}" создана»
-  - Показывается на `DeckListScreen` после возврата с формы создания
-  - Механизм: SideEffect `DeckSaved` → `DeckListScreen` показывает Snackbar (передать через Voyager result или через DI-shared channel)
+  - Показывается на `DecksScreen` после возврата с формы создания
+  - Механизм: SideEffect `DeckSaved` → `DecksScreen` показывает Snackbar (передать через Voyager result или через DI-shared channel)
 
 > [!IMPORTANT]
 > Передача Snackbar-события между экранами (DeckFormScreen → DeckListScreen) — нетривиальна в Voyager. Варианты:
@@ -459,20 +459,20 @@ flowchart TD
 
 **Зачем:** Подключить новые экраны в граф навигации Voyager вместо демо-заглушки.
 
-- [ ] Заменить содержимое `CardsRootScreen.Content()` на `DeckListScreen`:
-  - `CardsRootScreen` теперь отображает `DeckListScreen` (из `feature:deck`) вместо `CardsScreen()`
+- [ ] Заменить содержимое `CardsRootScreen.Content()` на `DecksScreen`:
+  - `DecksRootScreen` теперь отображает `DecksScreen` (из `feature:deck`) вместо `CardsScreen()`
   - Старая `CardsScreen.kt` (с демо-данными) удаляется или помечается deprecated
 - [ ] Настроить навигацию внутри таба «Колоды»:
-  - `DeckListScreen` → тап на FAB → `navigator.push(DeckFormScreen(deckId = null))`
-  - `DeckListScreen` → тап на «Редактировать» → `navigator.push(DeckFormScreen(deckId = deck.id))`
+  - `DecksScreen` → тап на FAB → `navigator.push(DeckFormScreen(deckId = null))`
+  - `DecksScreen` → тап на «Редактировать» → `navigator.push(DeckFormScreen(deckId = deck.id))`
   - `DeckFormScreen` → сохранение → `navigator.pop()`
-  - `DeckListScreen` → тап на колоду → пока `navigator.push(DeckDetailScreen(deckId))` (заглушка, реализация на шаге 3)
+  - `DecksScreen` → тап на колоду → пока `navigator.push(DeckDetailScreen(deckId))` (заглушка, реализация на шаге 3)
 - [ ] Удалить или пометить как deprecated файлы демо-карточки:
   - `shared/src/commonMain/.../ui/screens/cards/CardsScreen.kt`
   - `shared/src/commonMain/.../ui/design/drafts/CardsScreenDesignDraft.kt` (если больше не нужен)
 
 **Файлы (модификация):**
-- `shared/src/commonMain/.../ui/navigation/RootScreens.kt` — изменить `CardsRootScreen`
+- `shared/src/commonMain/.../ui/navigation/RootScreens.kt` — изменить `DecksRootScreen`
 - `shared/src/commonMain/.../ui/screens/cards/CardsScreen.kt` — удалить или deprecated
 
 **Готово, когда:** Таб «Колоды» показывает реальные данные из БД с полной навигацией создание → список.

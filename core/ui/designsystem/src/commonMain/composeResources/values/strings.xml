@@ -19,4 +19,19 @@
     <string name="deck_card_count_one">%1$d card</string>
     <string name="deck_card_count_few">%1$d cards</string>
     <string name="deck_card_count_many">%1$d cards</string>
+
+    <!-- Deck Form Screen -->
+    <string name="deck_form_back_button">← Back</string>
+    <string name="deck_form_title_create">New Deck</string>
+    <string name="deck_form_title_edit">Edit Deck</string>
+    <string name="deck_form_name_label">Deck name</string>
+    <string name="deck_form_name_placeholder">e.g. Spanish Vocabulary</string>
+    <string name="deck_form_name_error_empty">Enter deck name</string>
+    <string name="deck_form_description_label">Description (optional)</string>
+    <string name="deck_form_description_placeholder">e.g. Basic travel phrases</string>
+    <string name="deck_form_save_button">Save</string>
+    <string name="deck_form_discard_dialog_title">Discard changes?</string>
+    <string name="deck_form_discard_dialog_message">Unsaved changes will be lost.</string>
+    <string name="deck_form_discard_dialog_cancel">No</string>
+    <string name="deck_form_discard_dialog_confirm">Yes</string>
 </resources>

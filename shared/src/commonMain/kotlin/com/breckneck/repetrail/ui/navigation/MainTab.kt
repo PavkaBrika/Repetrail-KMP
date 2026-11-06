@@ -14,7 +14,7 @@ internal enum class MainTab(
     private val rootScreen: Screen,
 ) : Tab {
     Tasks("Задания", AppIcon.Tasks, TasksRootScreen),
-    Cards("Карточки", AppIcon.Cards, CardsRootScreen),
+    Decks("Карточки", AppIcon.Decks, DecksRootScreen),
     Menu("Меню", AppIcon.Menu, MenuRootScreen);
 
     override val key: String get() = "tab.$name"

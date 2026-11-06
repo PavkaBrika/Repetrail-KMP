@@ -41,7 +41,7 @@ internal fun TasksScreenDesignDraft(onStartReview: () -> Unit) {
         }
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionHeading("План на сегодня", "2 шага")
-            TaskRow(AppIcon.Cards, "Повторить карточки", "12 карточек · около 5 минут", "НАЧАТЬ")
+            TaskRow(AppIcon.Decks, "Повторить карточки", "12 карточек · около 5 минут", "НАЧАТЬ")
             TaskRow(AppIcon.Tasks, "Закрепить сложное", "Вернись к словам, которые запомнить труднее", "5 ШТУК")
         }
     }

@@ -1,0 +1,42 @@
+package com.breckneck.feature.deck.form
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import org.koin.core.parameter.parametersOf
+
+data class DeckFormScreen(val deckId: Long? = null) : Screen {
+
+    override val key: String get() = "screen.deck-form-${deckId ?: "new"}"
+
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+        val screenModel = koinScreenModel<DeckFormScreenModel> { parametersOf(deckId) }
+        val state by screenModel.state.collectAsState()
+
+        LaunchedEffect(screenModel) {
+            screenModel.sideEffect.collect { effect ->
+                when (effect) {
+                    is DeckFormSideEffect.DeckSaved -> {
+                        // Handled by NavigateBack
+                    }
+
+                    DeckFormSideEffect.NavigateBack -> {
+                        navigator.pop()
+                    }
+                }
+            }
+        }
+
+        DeckFormContent(
+            state = state,
+            onIntent = screenModel::onIntent,
+        )
+    }
+}

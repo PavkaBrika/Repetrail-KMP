@@ -19,4 +19,19 @@
     <string name="deck_card_count_one">%1$d карточка</string>
     <string name="deck_card_count_few">%1$d карточки</string>
     <string name="deck_card_count_many">%1$d карточек</string>
+
+    <!-- Deck Form Screen -->
+    <string name="deck_form_back_button">← Назад</string>
+    <string name="deck_form_title_create">Новая колода</string>
+    <string name="deck_form_title_edit">Редактирование колоды</string>
+    <string name="deck_form_name_label">Название колоды</string>
+    <string name="deck_form_name_placeholder">например, Испанский словарь</string>
+    <string name="deck_form_name_error_empty">Введите название колоды</string>
+    <string name="deck_form_description_label">Описание (необязательно)</string>
+    <string name="deck_form_description_placeholder">например, Разговорные фразы для путешествий</string>
+    <string name="deck_form_save_button">Сохранить</string>
+    <string name="deck_form_discard_dialog_title">Отменить изменения?</string>
+    <string name="deck_form_discard_dialog_message">Несохранённые изменения будут потеряны.</string>
+    <string name="deck_form_discard_dialog_cancel">Нет</string>
+    <string name="deck_form_discard_dialog_confirm">Да</string>
 </resources>

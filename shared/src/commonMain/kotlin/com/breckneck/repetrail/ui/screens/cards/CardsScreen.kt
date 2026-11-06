@@ -32,6 +32,7 @@ private val sampleDecks = listOf(
     "Химия · элементы",
 )
 
+@Deprecated("Replaced by DeckListScreen in feature:deck")
 @Composable
 internal fun CardsScreen() {
     LazyColumn(

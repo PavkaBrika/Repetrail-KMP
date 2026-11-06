@@ -50,7 +50,7 @@ import repetrail.core.ui.designsystem.generated.resources.deck_list_title
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeckListContent(
+fun DecksContent(
     state: DeckListState,
     onIntent: (DeckListIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -282,9 +282,9 @@ fun DeckListContent(
 
 @Preview
 @Composable
-private fun DeckListContentPreview() {
+private fun DecksContentPreview() {
     RepetrailTheme {
-        DeckListContent(
+        DecksContent(
             state = DeckListState.initial()
                 .copy(
                     uiState = DeckListUiState.Content(
@@ -315,9 +315,9 @@ private fun DeckListContentPreview() {
 
 @Preview
 @Composable
-private fun DeckListContentEmptyPreview() {
+private fun DecksContentEmptyPreview() {
     RepetrailTheme {
-        DeckListContent(
+        DecksContent(
             state = DeckListState.initial().copy(uiState = DeckListUiState.Empty),
             onIntent = {},
         )
@@ -326,9 +326,9 @@ private fun DeckListContentEmptyPreview() {
 
 @Preview
 @Composable
-private fun DeckListContentErrorPreview() {
+private fun DecksContentErrorPreview() {
     RepetrailTheme {
-        DeckListContent(
+        DecksContent(
             state = DeckListState.initial()
                 .copy(uiState = DeckListUiState.Error(message = "Failed to load decks")),
             onIntent = {},

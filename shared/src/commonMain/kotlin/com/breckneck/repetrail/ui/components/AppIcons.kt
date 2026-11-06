@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 
-internal enum class AppIcon { Tasks, Cards, Menu }
+internal enum class AppIcon { Tasks, Decks, Menu }
 
 @Composable
 internal fun BrandMark(tint: Color, modifier: Modifier = Modifier) {
@@ -63,7 +63,7 @@ internal fun AppIconView(icon: AppIcon, tint: Color, modifier: Modifier = Modifi
                 }
                 drawPath(path, tint, style = stroke)
             }
-            AppIcon.Cards -> {
+            AppIcon.Decks -> {
                 drawRoundRect(
                     color = tint,
                     topLeft = Offset(3f * unit, 5f * unit),

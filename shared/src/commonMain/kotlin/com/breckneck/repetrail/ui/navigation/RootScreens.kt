@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.breckneck.repetrail.ui.screens.cards.CardsScreen
+import com.breckneck.feature.deck.presentation.DecksScreen
 import com.breckneck.repetrail.ui.screens.menu.MenuScreen
 import com.breckneck.repetrail.ui.screens.tasks.TasksScreen
 
@@ -17,12 +17,12 @@ internal object TasksRootScreen : Screen {
     }
 }
 
-internal object CardsRootScreen : Screen {
+internal object DecksRootScreen : Screen {
     override val key: String = "screen.cards"
 
     @Composable
     override fun Content() {
-        CardsScreen()
+        DecksScreen()
     }
 }
 
