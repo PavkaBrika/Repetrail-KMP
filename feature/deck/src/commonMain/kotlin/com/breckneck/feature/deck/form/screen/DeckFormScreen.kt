@@ -5,30 +5,24 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.breckneck.feature.deck.form.DeckFormIntent
-import com.breckneck.feature.deck.form.DeckFormScreenModel
 import com.breckneck.feature.deck.form.DeckFormSideEffect
-import org.koin.core.parameter.parametersOf
+import com.breckneck.feature.deck.form.DeckFormViewModel
 
-internal data class DeckFormScreen(
-    val deckId: Long? = null,
-    private val onNavigateBack: (() -> Unit)? = null,
+internal class DeckFormScreen(
+    private val viewModel: DeckFormViewModel,
+    private val onNavigateBack: () -> Unit,
 ) : Screen {
 
-    override val key: String get() = "screen.deck-form-${deckId ?: "new"}"
+    override val key: String = "screen.deck-form"
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val screenModel = koinScreenModel<DeckFormScreenModel> { parametersOf(deckId) }
-        val state by screenModel.state.collectAsState()
+        val state by viewModel.state.collectAsState()
 
         DeckFormBackHandler(
             onBack = {
-                screenModel.onIntent(
+                viewModel.onIntent(
                     if (state.showDiscardDialog) {
                         DeckFormIntent.CancelDiscard
                     } else {
@@ -38,19 +32,15 @@ internal data class DeckFormScreen(
             },
         )
 
-        LaunchedEffect(screenModel) {
-            screenModel.sideEffect.collect { effect ->
+        LaunchedEffect(viewModel) {
+            viewModel.sideEffect.collect { effect ->
                 when (effect) {
                     is DeckFormSideEffect.DeckSaved -> {
                         // Handled by NavigateBack
                     }
 
                     DeckFormSideEffect.NavigateBack -> {
-                        if (onNavigateBack != null) {
-                            onNavigateBack.invoke()
-                        } else {
-                            navigator.pop()
-                        }
+                        onNavigateBack()
                     }
                 }
             }
@@ -58,7 +48,7 @@ internal data class DeckFormScreen(
 
         DeckFormContent(
             state = state,
-            onIntent = screenModel::onIntent,
+            onIntent = viewModel::onIntent,
         )
     }
 }

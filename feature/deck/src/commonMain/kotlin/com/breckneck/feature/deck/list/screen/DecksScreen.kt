@@ -5,36 +5,27 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.breckneck.feature.deck.form.screen.DeckFormScreen
-import com.breckneck.feature.deck.list.DeckListScreenModel
 import com.breckneck.feature.deck.list.DeckListSideEffect
+import com.breckneck.feature.deck.list.DeckListViewModel
 
 class DecksScreen(
-    private val onNavigateToDeckForm: ((Long?) -> Unit)? = null,
+    private val viewModel: DeckListViewModel,
+    private val onNavigateToDeckForm: (Long?) -> Unit,
 ) : Screen {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val screenModel = koinScreenModel<DeckListScreenModel>()
-        val state by screenModel.state.collectAsState()
+        val state by viewModel.state.collectAsState()
 
-        LaunchedEffect(screenModel) {
-            screenModel.sideEffect.collect { effect ->
+        LaunchedEffect(viewModel) {
+            viewModel.sideEffect.collect { effect ->
                 when (effect) {
                     is DeckListSideEffect.NavigateToDeckForm -> {
-                        if (onNavigateToDeckForm != null) {
-                            onNavigateToDeckForm(effect.deckId)
-                        } else {
-                            navigator.push(DeckFormScreen(deckId = effect.deckId))
-                        }
+                        onNavigateToDeckForm(effect.deckId)
                     }
 
                     is DeckListSideEffect.NavigateToDeckDetail -> {
-                        // Will be wired to DeckDetailScreen in step 3
+                        // Will be wired to DeckDetailScreen in step 4
                     }
                 }
             }
@@ -42,7 +33,7 @@ class DecksScreen(
 
         DecksContent(
             state = state,
-            onIntent = screenModel::onIntent,
+            onIntent = viewModel::onIntent,
         )
     }
 }

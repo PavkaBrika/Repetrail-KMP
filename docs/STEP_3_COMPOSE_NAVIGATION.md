@@ -115,17 +115,17 @@ Navigation, Lifecycle и Navigation Event взяты из состава [Compos
 
 ### 3.4. Перенести ScreenModel на AndroidX ViewModel
 
-- [ ] Переименовать `DeckListScreenModel` в `DeckListViewModel`, `DeckFormScreenModel` — в `DeckFormViewModel`.
-- [ ] Заменить `StateScreenModel` на `androidx.lifecycle.ViewModel`.
-- [ ] В каждой модели явно объявить приватный `MutableStateFlow` и публичный `StateFlow` через `asStateFlow()`.
-- [ ] Заменить `screenModelScope` на `viewModelScope`.
-- [ ] Сохранить существующие `State`, `Intent`, `SideEffect`, Channel, загрузку, валидацию, сохранение и удаление.
-- [ ] Сохранить проброс `CancellationException`.
-- [ ] В форме добавить `SavedStateHandle` в конструктор. `deckId` получать из `savedStateHandle.toRoute<DeckFormRoute>()`.
-- [ ] В Koin заменить `factory` экранных моделей на `viewModel { … }`. Регистрации use cases оставить прежними.
-- [ ] Получать модели через `koinViewModel()` внутри соответствующих destinations; явно передавать их `NavBackStackEntry` как `viewModelStoreOwner` и её `defaultViewModelCreationExtras`.
-- [ ] Не создавать модели через `remember`, `get()` или конструктор внутри composable. Не привязывать их к Activity или всему табу.
-- [ ] Обычный `popBackStack()` формы должен окончательно удалять её запись без `saveState = true`; очисткой ViewModel занимается библиотека.
+- [x] Переименовать `DeckListScreenModel` в `DeckListViewModel`, `DeckFormScreenModel` — в `DeckFormViewModel`.
+- [x] Заменить `StateScreenModel` на `androidx.lifecycle.ViewModel`.
+- [x] В каждой модели явно объявить приватный `MutableStateFlow` и публичный `StateFlow` через `asStateFlow()`.
+- [x] Заменить `screenModelScope` на `viewModelScope`.
+- [x] Сохранить существующие `State`, `Intent`, `SideEffect`, Channel, загрузку, валидацию, сохранение и удаление.
+- [x] Сохранить проброс `CancellationException`.
+- [x] В форме добавить `SavedStateHandle` в конструктор. `deckId` получать из `savedStateHandle.toRoute<DeckFormRoute>()`.
+- [x] В Koin заменить `factory` экранных моделей на `viewModel { … }`. Регистрации use cases оставить прежними.
+- [x] Получать модели через `koinViewModel()` внутри соответствующих destinations; явно передавать их `NavBackStackEntry` как `viewModelStoreOwner` и её `defaultViewModelCreationExtras`.
+- [x] Не создавать модели через `remember`, `get()` или конструктор внутри composable. Не привязывать их к Activity или всему табу.
+- [x] Обычный `popBackStack()` формы должен окончательно удалять её запись без `saveState = true`; очисткой ViewModel занимается библиотека.
 
 В Navigation Compose запись destination является владельцем ViewModel; Koin получает аргументы и `SavedStateHandle` через её extras. См. [Koin ViewModel in Compose](https://insert-koin.io/docs/reference/koin-compose/compose-viewmodel/).
 

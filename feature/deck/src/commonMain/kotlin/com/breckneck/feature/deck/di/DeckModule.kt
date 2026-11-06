@@ -4,8 +4,9 @@ import com.breckneck.core.domain.usecase.deck.DeleteDeckUseCase
 import com.breckneck.core.domain.usecase.deck.GetDeckByIdUseCase
 import com.breckneck.core.domain.usecase.deck.ObserveDecksUseCase
 import com.breckneck.core.domain.usecase.deck.SaveDeckUseCase
-import com.breckneck.feature.deck.form.DeckFormScreenModel
-import com.breckneck.feature.deck.list.DeckListScreenModel
+import com.breckneck.feature.deck.form.DeckFormViewModel
+import com.breckneck.feature.deck.list.DeckListViewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val deckModule = module {
@@ -13,10 +14,15 @@ val deckModule = module {
     factory { GetDeckByIdUseCase(repository = get()) }
     factory { SaveDeckUseCase(repository = get(), timeProvider = get()) }
     factory { DeleteDeckUseCase(repository = get()) }
-    factory { DeckListScreenModel(observeDecksUseCase = get(), deleteDeckUseCase = get()) }
-    factory { (deckId: Long?) ->
-        DeckFormScreenModel(
-            deckId = deckId,
+    viewModel {
+        DeckListViewModel(
+            observeDecksUseCase = get(),
+            deleteDeckUseCase = get(),
+        )
+    }
+    viewModel {
+        DeckFormViewModel(
+            savedStateHandle = get(),
             getDeckByIdUseCase = get(),
             saveDeckUseCase = get(),
         )

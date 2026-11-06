@@ -1,13 +1,16 @@
 package com.breckneck.feature.deck.list
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.breckneck.core.domain.usecase.deck.DeleteDeckUseCase
 import com.breckneck.core.domain.usecase.deck.ObserveDecksUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -17,10 +20,13 @@ import repetrail.core.ui.designsystem.generated.resources.Res
 import repetrail.core.ui.designsystem.generated.resources.deck_list_error_delete
 import repetrail.core.ui.designsystem.generated.resources.deck_list_error_load
 
-class DeckListScreenModel(
+class DeckListViewModel(
     private val observeDecksUseCase: ObserveDecksUseCase,
     private val deleteDeckUseCase: DeleteDeckUseCase,
-) : StateScreenModel<DeckListState>(DeckListState.initial()) {
+) : ViewModel() {
+
+    private val mutableState = MutableStateFlow(DeckListState.initial())
+    val state: StateFlow<DeckListState> = mutableState.asStateFlow()
 
     private val _sideEffect = Channel<DeckListSideEffect>(Channel.BUFFERED)
     val sideEffect: Flow<DeckListSideEffect> = _sideEffect.receiveAsFlow()
@@ -70,7 +76,7 @@ class DeckListScreenModel(
     private fun observeDecks() {
         observeJob?.cancel()
 
-        observeJob = screenModelScope.launch {
+        observeJob = viewModelScope.launch {
             mutableState.update { it.copy(uiState = DeckListUiState.Loading) }
 
             observeDecksUseCase()
@@ -96,7 +102,7 @@ class DeckListScreenModel(
         }
     }
 
-    private fun confirmDelete() = screenModelScope.launch {
+    private fun confirmDelete() = viewModelScope.launch {
         val deck = state.value.deleteDeckDialogState.deckToDelete ?: return@launch
 
         mutableState.update {

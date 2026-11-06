@@ -1,12 +1,18 @@
 package com.breckneck.feature.deck.form
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.breckneck.feature.deck.navigation.DeckFormRoute
 import com.breckneck.core.domain.usecase.deck.GetDeckByIdUseCase
 import com.breckneck.core.domain.usecase.deck.SaveDeckUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -15,11 +21,15 @@ import org.jetbrains.compose.resources.getString
 import repetrail.core.ui.designsystem.generated.resources.Res
 import repetrail.core.ui.designsystem.generated.resources.deck_form_name_error_empty
 
-class DeckFormScreenModel(
-    private val deckId: Long?,
+class DeckFormViewModel(
+    savedStateHandle: SavedStateHandle,
     private val getDeckByIdUseCase: GetDeckByIdUseCase,
     private val saveDeckUseCase: SaveDeckUseCase,
-) : StateScreenModel<DeckFormState>(DeckFormState(deckId = deckId)) {
+) : ViewModel() {
+
+    private val deckId = savedStateHandle.toRoute<DeckFormRoute>().deckId
+    private val mutableState = MutableStateFlow(DeckFormState(deckId = deckId))
+    val state: StateFlow<DeckFormState> = mutableState.asStateFlow()
 
     private val _sideEffect = Channel<DeckFormSideEffect>(Channel.BUFFERED)
     val sideEffect: Flow<DeckFormSideEffect> = _sideEffect.receiveAsFlow()
@@ -63,7 +73,7 @@ class DeckFormScreenModel(
         }
     }
 
-    private fun loadDeck(id: Long) = screenModelScope.launch {
+    private fun loadDeck(id: Long) = viewModelScope.launch {
         mutableState.update { it.copy(uiState = DeckFormUiState.Loading) }
         try {
             val deck = getDeckByIdUseCase(id)
@@ -87,7 +97,7 @@ class DeckFormScreenModel(
         }
     }
 
-    private fun saveDeck() = screenModelScope.launch {
+    private fun saveDeck() = viewModelScope.launch {
         val trimmedName = state.value.name.trim()
         if (trimmedName.isBlank()) {
             val errorMessage = getString(Res.string.deck_form_name_error_empty)
