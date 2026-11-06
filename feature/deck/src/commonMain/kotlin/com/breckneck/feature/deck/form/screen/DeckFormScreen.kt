@@ -8,6 +8,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.breckneck.feature.deck.form.DeckFormIntent
 import com.breckneck.feature.deck.form.DeckFormScreenModel
 import com.breckneck.feature.deck.form.DeckFormSideEffect
 import org.koin.core.parameter.parametersOf
@@ -21,6 +22,18 @@ internal data class DeckFormScreen(val deckId: Long? = null) : Screen {
         val navigator = LocalNavigator.currentOrThrow
         val screenModel = koinScreenModel<DeckFormScreenModel> { parametersOf(deckId) }
         val state by screenModel.state.collectAsState()
+
+        DeckFormBackHandler(
+            onBack = {
+                screenModel.onIntent(
+                    if (state.showDiscardDialog) {
+                        DeckFormIntent.CancelDiscard
+                    } else {
+                        DeckFormIntent.BackClicked
+                    },
+                )
+            },
+        )
 
         LaunchedEffect(screenModel) {
             screenModel.sideEffect.collect { effect ->
