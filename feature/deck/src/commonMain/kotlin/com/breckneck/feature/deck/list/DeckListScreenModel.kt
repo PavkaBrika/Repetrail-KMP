@@ -12,6 +12,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
+import repetrail.core.ui.designsystem.generated.resources.Res
+import repetrail.core.ui.designsystem.generated.resources.deck_list_error_delete
+import repetrail.core.ui.designsystem.generated.resources.deck_list_error_load
 
 class DeckListScreenModel(
     private val observeDecksUseCase: ObserveDecksUseCase,
@@ -48,7 +52,7 @@ class DeckListScreenModel(
                         deleteDeckDialogState = DeleteDeckDialogState(
                             isVisible = true,
                             deckToDelete = intent.deck,
-                        )
+                        ),
                     )
                 }
             }
@@ -71,11 +75,10 @@ class DeckListScreenModel(
 
             observeDecksUseCase()
                 .catch { throwable ->
+                    val errorMessage = throwable.message ?: getString(Res.string.deck_list_error_load)
                     mutableState.update {
                         it.copy(
-                            uiState = DeckListUiState.Error(
-                                message = throwable.message ?: "Не удалось загрузить список колод",
-                            ),
+                            uiState = DeckListUiState.Error(message = errorMessage),
                         )
                     }
                 }
@@ -105,11 +108,10 @@ class DeckListScreenModel(
         } catch (exception: CancellationException) {
             throw exception
         } catch (exception: Exception) {
+            val errorMessage = exception.message ?: getString(Res.string.deck_list_error_delete)
             mutableState.update {
                 it.copy(
-                    uiState = DeckListUiState.Error(
-                        message = exception.message ?: "Не удалось удалить колоду",
-                    ),
+                    uiState = DeckListUiState.Error(message = errorMessage),
                 )
             }
         }

@@ -11,6 +11,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+import org.jetbrains.compose.resources.getString
+import repetrail.core.ui.designsystem.generated.resources.Res
+import repetrail.core.ui.designsystem.generated.resources.deck_form_name_error_empty
+
 class DeckFormScreenModel(
     private val deckId: Long?,
     private val getDeckByIdUseCase: GetDeckByIdUseCase,
@@ -86,7 +90,8 @@ class DeckFormScreenModel(
     private fun saveDeck() = screenModelScope.launch {
         val trimmedName = state.value.name.trim()
         if (trimmedName.isBlank()) {
-            mutableState.update { it.copy(nameError = "REQUIRED") }
+            val errorMessage = getString(Res.string.deck_form_name_error_empty)
+            mutableState.update { it.copy(nameError = errorMessage) }
             return@launch
         }
 

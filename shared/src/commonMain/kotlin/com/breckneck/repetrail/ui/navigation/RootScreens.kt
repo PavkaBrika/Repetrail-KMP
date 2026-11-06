@@ -22,7 +22,7 @@ internal object DecksRootScreen : Screen {
 
     @Composable
     override fun Content() {
-        DecksScreen()
+        DecksScreen().Content()
     }
 }
 

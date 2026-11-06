@@ -44,7 +44,6 @@ import repetrail.core.ui.designsystem.generated.resources.deck_form_discard_dial
 import repetrail.core.ui.designsystem.generated.resources.deck_form_discard_dialog_confirm
 import repetrail.core.ui.designsystem.generated.resources.deck_form_discard_dialog_message
 import repetrail.core.ui.designsystem.generated.resources.deck_form_discard_dialog_title
-import repetrail.core.ui.designsystem.generated.resources.deck_form_name_error_empty
 import repetrail.core.ui.designsystem.generated.resources.deck_form_name_label
 import repetrail.core.ui.designsystem.generated.resources.deck_form_name_placeholder
 import repetrail.core.ui.designsystem.generated.resources.deck_form_save_button
@@ -113,15 +112,15 @@ internal fun DeckFormContent(
                     label = { Text(stringResource(Res.string.deck_form_name_label)) },
                     placeholder = { Text(stringResource(Res.string.deck_form_name_placeholder)) },
                     isError = state.nameError != null,
-                    supportingText = if (state.nameError != null) {
+                    supportingText = state.nameError?.let { errorText ->
                         {
                             Text(
-                                text = stringResource(Res.string.deck_form_name_error_empty),
+                                text = errorText,
                                 color = RepetrailTheme.colors.accent,
                                 style = RepetrailTheme.typography.bodySmall,
                             )
                         }
-                    } else null,
+                    },
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = RepetrailTheme.colors.accent,

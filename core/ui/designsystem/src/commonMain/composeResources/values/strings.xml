@@ -13,6 +13,8 @@
     <string name="deck_list_delete_dialog_message">Deck "%1$s" and all its flashcards (%2$d) will be deleted. This action cannot be undone.</string>
     <string name="deck_list_delete_dialog_cancel">Cancel</string>
     <string name="deck_list_delete_dialog_confirm">Delete</string>
+    <string name="deck_list_error_load">Failed to load decks</string>
+    <string name="deck_list_error_delete">Failed to delete deck</string>
 
     <!-- Deck Card Quantities -->
     <string name="deck_card_count_zero">0 cards</string>

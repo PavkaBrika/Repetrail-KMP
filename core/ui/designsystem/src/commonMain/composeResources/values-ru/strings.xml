@@ -13,6 +13,8 @@
     <string name="deck_list_delete_dialog_message">Колода "%1$s" и все её карточки (%2$d) будут удалены. Это нельзя отменить.</string>
     <string name="deck_list_delete_dialog_cancel">Отмена</string>
     <string name="deck_list_delete_dialog_confirm">Удалить</string>
+    <string name="deck_list_error_load">Не удалось загрузить список колод</string>
+    <string name="deck_list_error_delete">Не удалось удалить колоду</string>
 
     <!-- Deck Card Quantities -->
     <string name="deck_card_count_zero">0 карточек</string>
