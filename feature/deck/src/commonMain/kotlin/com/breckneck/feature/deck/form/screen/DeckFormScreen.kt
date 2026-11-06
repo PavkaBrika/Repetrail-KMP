@@ -13,7 +13,10 @@ import com.breckneck.feature.deck.form.DeckFormScreenModel
 import com.breckneck.feature.deck.form.DeckFormSideEffect
 import org.koin.core.parameter.parametersOf
 
-internal data class DeckFormScreen(val deckId: Long? = null) : Screen {
+internal data class DeckFormScreen(
+    val deckId: Long? = null,
+    private val onNavigateBack: (() -> Unit)? = null,
+) : Screen {
 
     override val key: String get() = "screen.deck-form-${deckId ?: "new"}"
 
@@ -43,7 +46,11 @@ internal data class DeckFormScreen(val deckId: Long? = null) : Screen {
                     }
 
                     DeckFormSideEffect.NavigateBack -> {
-                        navigator.pop()
+                        if (onNavigateBack != null) {
+                            onNavigateBack.invoke()
+                        } else {
+                            navigator.pop()
+                        }
                     }
                 }
             }

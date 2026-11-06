@@ -80,13 +80,13 @@ Navigation, Lifecycle и Navigation Event взяты из состава [Compos
 
 ### 3.2. Определить маршруты и границу feature-модуля
 
-- [ ] В пакете `navigation` модуля `feature:deck` создать публичные маршруты `DeckListRoute` и `DeckFormRoute`.
-- [ ] Там же создать публичную функцию `NavGraphBuilder.deckDestinations(navController: NavHostController)`.
-- [ ] В функции зарегистрировать список и форму через типизированные `composable<…>`.
-- [ ] В пакете навигации `shared` создать внутренние маршруты `TasksRoute`, `MenuRoute`, `AboutRoute`.
-- [ ] Для создания открывать `DeckFormRoute()`, для редактирования — `DeckFormRoute(deckId)`.
-- [ ] Для переходов на форму и About использовать `launchSingleTop = true`, сохранив отсутствие дубликатов при повторном нажатии.
-- [ ] Не создавать строковые шаблоны маршрутов, собственные сериализаторы и ручной парсинг аргументов.
+- [x] В пакете `navigation` модуля `feature:deck` создать публичные маршруты `DeckListRoute` и `DeckFormRoute`.
+- [x] Там же создать публичную функцию `NavGraphBuilder.deckDestinations(navController: NavHostController)`.
+- [x] В функции зарегистрировать список и форму через типизированные `composable<…>`.
+- [x] В пакете навигации `shared` создать внутренние маршруты `TasksRoute`, `MenuRoute`, `AboutRoute`.
+- [x] Для создания открывать `DeckFormRoute()`, для редактирования — `DeckFormRoute(deckId)`.
+- [x] Для переходов на форму и About использовать `launchSingleTop = true`, сохранив отсутствие дубликатов при повторном нажатии.
+- [x] Не создавать строковые шаблоны маршрутов, собственные сериализаторы и ручной парсинг аргументов.
 
 **Готово, когда:** destinations и аргументы определены, `shared` может подключить навигацию колод через публичную функцию feature-модуля.
 

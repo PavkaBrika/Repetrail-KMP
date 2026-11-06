@@ -12,7 +12,9 @@ import com.breckneck.feature.deck.form.screen.DeckFormScreen
 import com.breckneck.feature.deck.list.DeckListScreenModel
 import com.breckneck.feature.deck.list.DeckListSideEffect
 
-class DecksScreen : Screen {
+class DecksScreen(
+    private val onNavigateToDeckForm: ((Long?) -> Unit)? = null,
+) : Screen {
 
     @Composable
     override fun Content() {
@@ -24,7 +26,11 @@ class DecksScreen : Screen {
             screenModel.sideEffect.collect { effect ->
                 when (effect) {
                     is DeckListSideEffect.NavigateToDeckForm -> {
-                        navigator.push(DeckFormScreen(deckId = effect.deckId))
+                        if (onNavigateToDeckForm != null) {
+                            onNavigateToDeckForm(effect.deckId)
+                        } else {
+                            navigator.push(DeckFormScreen(deckId = effect.deckId))
+                        }
                     }
 
                     is DeckListSideEffect.NavigateToDeckDetail -> {
