@@ -45,65 +45,55 @@ fun MainMenuScreen() {
             color = RepetrailTheme.colors.background
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-//                        .windowInsetsPadding(
-//                            WindowInsets.safeDrawing.only(
-//                                WindowInsetsSides.Top + WindowInsetsSides.Horizontal,
-//                            ),
-//                        ),
-                ) {
-                    saveableStateHolder.SaveableStateProvider(selectedTab.name) {
-                        when (selectedTab) {
-                            MainTab.Tasks -> {
-                                NavHost(
-                                    navController = tasksNavController,
-                                    startDestination = TasksRoute,
-                                    modifier = Modifier.fillMaxSize(),
-                                    enterTransition = forwardEnterTransition,
-                                    exitTransition = forwardExitTransition,
-                                    popEnterTransition = backEnterTransition,
-                                    popExitTransition = backExitTransition,
-                                    predictivePopEnterTransition = predictiveBackEnterTransition,
-                                    predictivePopExitTransition = predictiveBackExitTransition,
-                                ) {
-                                    composable<TasksRoute> {
-                                        TasksScreen()
-                                    }
+                saveableStateHolder.SaveableStateProvider(selectedTab.name) {
+                    when (selectedTab) {
+                        MainTab.Tasks -> {
+                            NavHost(
+                                navController = tasksNavController,
+                                startDestination = TasksRoute,
+                                modifier = Modifier.fillMaxSize(),
+                                enterTransition = forwardEnterTransition,
+                                exitTransition = forwardExitTransition,
+                                popEnterTransition = backEnterTransition,
+                                popExitTransition = backExitTransition,
+                                predictivePopEnterTransition = predictiveBackEnterTransition,
+                                predictivePopExitTransition = predictiveBackExitTransition,
+                            ) {
+                                composable<TasksRoute> {
+                                    TasksScreen()
                                 }
                             }
+                        }
 
-                            MainTab.Decks -> {
-                                NavHost(
-                                    navController = decksNavController,
-                                    startDestination = DeckListRoute,
-                                    modifier = Modifier.fillMaxSize(),
-                                    enterTransition = forwardEnterTransition,
-                                    exitTransition = forwardExitTransition,
-                                    popEnterTransition = backEnterTransition,
-                                    popExitTransition = backExitTransition,
-                                    predictivePopEnterTransition = predictiveBackEnterTransition,
-                                    predictivePopExitTransition = predictiveBackExitTransition,
-                                ) {
-                                    deckDestinations(decksNavController)
-                                }
+                        MainTab.Decks -> {
+                            NavHost(
+                                navController = decksNavController,
+                                startDestination = DeckListRoute,
+                                modifier = Modifier.fillMaxSize(),
+                                enterTransition = forwardEnterTransition,
+                                exitTransition = forwardExitTransition,
+                                popEnterTransition = backEnterTransition,
+                                popExitTransition = backExitTransition,
+                                predictivePopEnterTransition = predictiveBackEnterTransition,
+                                predictivePopExitTransition = predictiveBackExitTransition,
+                            ) {
+                                deckDestinations(decksNavController)
                             }
+                        }
 
-                            MainTab.Menu -> {
-                                NavHost(
-                                    navController = menuNavController,
-                                    startDestination = MenuRoute,
-                                    modifier = Modifier.fillMaxSize(),
-                                    enterTransition = forwardEnterTransition,
-                                    exitTransition = forwardExitTransition,
-                                    popEnterTransition = backEnterTransition,
-                                    popExitTransition = backExitTransition,
-                                    predictivePopEnterTransition = predictiveBackEnterTransition,
-                                    predictivePopExitTransition = predictiveBackExitTransition,
-                                ) {
-                                    menuDestinations(menuNavController)
-                                }
+                        MainTab.Menu -> {
+                            NavHost(
+                                navController = menuNavController,
+                                startDestination = MenuRoute,
+                                modifier = Modifier.fillMaxSize(),
+                                enterTransition = forwardEnterTransition,
+                                exitTransition = forwardExitTransition,
+                                popEnterTransition = backEnterTransition,
+                                popExitTransition = backExitTransition,
+                                predictivePopEnterTransition = predictiveBackEnterTransition,
+                                predictivePopExitTransition = predictiveBackExitTransition,
+                            ) {
+                                menuDestinations(menuNavController)
                             }
                         }
                     }
