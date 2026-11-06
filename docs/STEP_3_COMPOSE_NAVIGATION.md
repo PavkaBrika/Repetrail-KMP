@@ -94,20 +94,20 @@ Navigation, Lifecycle и Navigation Event взяты из состава [Compos
 
 Основная точка изменения — [MainMenuScreen.kt](../shared/src/commonMain/kotlin/com/breckneck/repetrail/ui/navigation/MainMenuScreen.kt).
 
-- [ ] Превратить `MainTab` в обычный enum с текущими названием и иконкой. Удалить реализацию Voyager `Tab`, `Screen`, `TabOptions` и создание `Navigator`.
-- [ ] В `MainMenuScreen` создать три `rememberNavController()` **выше выбора активного таба**. Переключение вкладки не должно создавать новый контроллер.
-- [ ] Хранить выбранный таб через `rememberSaveable`; начальное значение — Tasks.
-- [ ] Создать `rememberSaveableStateHolder()` и отображать активный таб внутри `SaveableStateProvider` со стабильным ключом таба.
-- [ ] Для выбранного таба показывать соответствующий `NavHost`. Не держать скрытые NavHost поверх друг друга.
-- [ ] В Tasks зарегистрировать текущий `TasksScreen`.
-- [ ] В Decks подключить `deckDestinations`.
-- [ ] В Menu зарегистрировать текущий `MenuScreen` и `AboutContent`.
-- [ ] Callback «О приложении» вызывает переход в контроллере Menu; кнопка возврата вызывает `popBackStack()` этого же контроллера.
-- [ ] Повторное нажатие активного таба ничего не делает.
-- [ ] Переключение таба меняет только выбранный таб: без `popUpTo`, сброса стека и подтверждения выхода из формы.
-- [ ] Сохранить существующие `RepetrailTheme`, Surface, floating navigation bar и обработку insets.
-- [ ] Панель вкладок оставить видимой и на форме, и на About, как сейчас.
-- [ ] На корне каждого таба не регистрировать собственный обработчик выхода: Android Back передаётся системе, без перехода на Tasks.
+- [x] Превратить `MainTab` в обычный enum с текущими названием и иконкой. Удалить реализацию Voyager `Tab`, `Screen`, `TabOptions` и создание `Navigator`.
+- [x] В `MainMenuScreen` создать три `rememberNavController()` **выше выбора активного таба**. Переключение вкладки не должно создавать новый контроллер.
+- [x] Хранить выбранный таб через `rememberSaveable`; начальное значение — Tasks.
+- [x] Создать `rememberSaveableStateHolder()` и отображать активный таб внутри `SaveableStateProvider` со стабильным ключом таба.
+- [x] Для выбранного таба показывать соответствующий `NavHost`. Не держать скрытые NavHost поверх друг друга.
+- [x] В Tasks зарегистрировать текущий `TasksScreen`.
+- [x] В Decks подключить `deckDestinations`.
+- [x] В Menu зарегистрировать текущий `MenuScreen` и `AboutContent`.
+- [x] Callback «О приложении» вызывает переход в контроллере Menu; кнопка возврата вызывает `popBackStack()` этого же контроллера.
+- [x] Повторное нажатие активного таба ничего не делает.
+- [x] Переключение таба меняет только выбранный таб: без `popUpTo`, сброса стека и подтверждения выхода из формы.
+- [x] Сохранить существующие `RepetrailTheme`, Surface, floating navigation bar и обработку insets.
+- [x] Панель вкладок оставить видимой и на форме, и на About, как сейчас.
+- [x] На корне каждого таба не регистрировать собственный обработчик выхода: Android Back передаётся системе, без перехода на Tasks.
 
 Для независимых стеков допустимы отдельные NavHost; библиотека также предоставляет штатные платформенные жесты. См. [Compose Navigation](https://kotlinlang.org/docs/multiplatform/compose-navigation.html).
 

@@ -5,20 +5,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.breckneck.repetrail.ui.screens.menu.AboutContent
 import com.breckneck.repetrail.ui.screens.menu.MenuScreen
-import com.breckneck.repetrail.ui.screens.tasks.TasksScreen
 
-internal fun NavGraphBuilder.mainDestinations(navController: NavHostController) {
-    composable<TasksRoute> {
-        TasksScreen()
-    }
+internal fun NavGraphBuilder.menuDestinations(navController: NavHostController) {
     composable<MenuRoute> {
-        MenuScreen {
-            navController.navigate(AboutRoute) {
-                launchSingleTop = true
-            }
-        }
+        MenuScreen(
+            onAboutClick = {
+                navController.navigate(AboutRoute) {
+                    launchSingleTop = true
+                }
+            },
+        )
     }
     composable<AboutRoute> {
-        AboutContent { navController.popBackStack() }
+        AboutContent(onBackClick = { navController.popBackStack() })
     }
 }
