@@ -101,6 +101,18 @@ Hoist state to the lowest level that needs to own or share it. Preserve input an
 
 Run side effects with the appropriate Compose APIs and meaningful keys, such as `LaunchedEffect`, `DisposableEffect`, and `rememberCoroutineScope`. Do not start navigation, subscriptions, or other external work directly during composition. Release resources when their composition lifecycle ends.
 
+### Smooth motion and screen-state transitions
+
+Animate visible changes as part of the UI design. In particular, transitions between existing loading, content, empty, and error states should feel continuous, without flashing, blinking, or abrupt layout jumps. Prefer restrained fades and coordinated size/position changes; keep persistent navigation and controls stable.
+
+- Use `AnimatedContent` for transitions between screen-state branches, `Crossfade` for a simple fade, and `AnimatedVisibility` for appearing/disappearing elements. Use `animate*AsState` for changing properties and `animateContentSize` where a size change benefits from interpolation. Choose the API for the actual change rather than wrapping every composable in animation.
+- Inside `AnimatedContent`/`Crossfade`, render from the state supplied to the content lambda. Where appropriate, key screen transitions by the logical branch (loading/content/empty/error), so changing a field or updating a list does not restart the whole screen transition. Keep list/input state and stable item identity across transitions where the workflow requires them.
+- During refresh, keep already available content visible when the existing state model supports it, with appropriate progress feedback. Do not clear content on every update or add artificial loading delays just to display an animation. Animation must not hide incorrect state handling or postpone ready content.
+- Keep effects and state collection at their existing ownership boundary: outgoing and incoming animated content can coexist. Prevent duplicate actions, focus targets, and accessibility announcements from inactive outgoing content.
+- Support rapid or interrupted state changes without replaying entrance animations on every recomposition or blocking interaction until an animation ends. Respect reduced/disabled motion settings and preserve the same final state and usable controls without animation.
+
+Verify the affected transitions in motion, including fast loading-to-content, error/retry, and refresh where supported. Check for blank frames, overlapping controls, lost scroll/input state, and size jumps; static previews alone do not verify animation behavior.
+
 ## 11. Lists and measured optimization
 
 Use lazy containers for large or unbounded lists and stable, unique item keys based on identity. Avoid position-based keys for mutable lists. Preserve list state as needed and keep events explicitly named at component call sites. Prefer concise lazy-list spacing to inserting separate spacer items when those would complicate the list.
@@ -116,5 +128,5 @@ Add focused UI tests for substantial behavior, such as meaningful state transiti
 ## Consistency checks
 
 - **Back action component:** expose `modifier` and `onBackClick`; the integration boundary passes `onBackClick = { navigator.pop() }`. Inside the component, use `onClick = onBackClick`; button content may remain a trailing lambda. A simple themed preview can pass `onBackClick = {}`. A clear callback body such as `onItemClick = { onSelect(it) }` is valid.
-- **List screen with states:** keep state/navigation wiring outside content, render the existing state branches, and use a lazy list with identity keys for content. Preview supported loading/content/empty/error states with inert callbacks, preserve scroll state as needed, and account for parent padding once. Do not add absent state variants just for previews.
+- **List screen with states:** keep state/navigation wiring outside content, render the existing state branches with smooth transitions, and use a lazy list with identity keys for content. Preview supported loading/content/empty/error states with inert callbacks, verify transitions in motion, preserve scroll state as needed, and account for parent padding once. Do not add absent state variants just for previews.
 - **Missing token:** if a design calls for a dimension with no suitable token, propose its value, role, name, and location in `DimensionTokens.kt`, then wait for agreement before extending or using it. Do not slip the proposed value into the component while the decision is pending.
