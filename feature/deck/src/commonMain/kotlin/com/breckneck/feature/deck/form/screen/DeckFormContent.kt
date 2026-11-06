@@ -50,6 +50,9 @@ import repetrail.core.ui.designsystem.generated.resources.deck_form_save_button
 import repetrail.core.ui.designsystem.generated.resources.deck_form_title_create
 import repetrail.core.ui.designsystem.generated.resources.deck_form_title_edit
 
+private const val MAX_NAME_LENGTH = 100
+private const val MAX_DESCRIPTION_LENGTH = 500
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DeckFormContent(
@@ -107,7 +110,11 @@ internal fun DeckFormContent(
 
                 OutlinedTextField(
                     value = state.name,
-                    onValueChange = { name -> onIntent(DeckFormIntent.NameChanged(name)) },
+                    onValueChange = { name ->
+                        if (name.length <= MAX_NAME_LENGTH) {
+                            onIntent(DeckFormIntent.NameChanged(name))
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text(stringResource(Res.string.deck_form_name_label)) },
                     placeholder = { Text(stringResource(Res.string.deck_form_name_placeholder)) },
@@ -134,7 +141,11 @@ internal fun DeckFormContent(
 
                 OutlinedTextField(
                     value = state.description,
-                    onValueChange = { desc -> onIntent(DeckFormIntent.DescriptionChanged(desc)) },
+                    onValueChange = { description ->
+                        if (description.length <= MAX_DESCRIPTION_LENGTH) {
+                            onIntent(DeckFormIntent.DescriptionChanged(description))
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text(stringResource(Res.string.deck_form_description_label)) },
                     placeholder = { Text(stringResource(Res.string.deck_form_description_placeholder)) },
