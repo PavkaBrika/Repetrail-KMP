@@ -150,18 +150,18 @@ Navigation, Lifecycle и Navigation Event взяты из состава [Compos
 
 #### Штатные переходы
 
-- [ ] Оставить стандартные transitions у NavHost и destinations. Не задавать собственные slide/fade-переходы: они могут заменить штатную iOS-анимацию.
+- [/] Оставить стандартные transitions у NavHost и destinations. Не задавать собственные slide/fade-переходы: они могут заменить штатную iOS-анимацию.
 - [ ] В iOS сохранить включённый back gesture у `ComposeUIViewController`.
-- [ ] В Android manifest явно установить `android:enableOnBackInvokedCallback="true"`.
-- [ ] Сохранить текущий `ComponentActivity`; не создавать собственный системный dispatcher.
+- [x] В Android manifest явно установить `android:enableOnBackInvokedCallback="true"`.
+- [x] Сохранить текущий `ComponentActivity`; не создавать собственный системный dispatcher.
 - [ ] На неизменённой форме без клавиатуры и на About отдавать жест самому NavHost.
 
 Navigation Compose поддерживает predictive back штатно; постоянный перехват Back поверх него здесь не нужен. См. [Android predictive back](https://developer.android.com/develop/ui/compose/system/predictive-back-setup).
 
 #### Форма
 
-- [ ] Заменить существующий `expect/actual DeckFormBackHandler` одним общим Compose-обработчиком на `NavigationBackHandler`; удалить Android-реализацию с обычным `BackHandler` и пустую iOS-реализацию.
-- [ ] Создать для него собственный `rememberNavigationEventState`. Не использовать один state в нескольких обработчиках.
+- [x] Заменить существующий `expect/actual DeckFormBackHandler` одним общим Compose-обработчиком на `NavigationBackHandler`; удалить Android-реализацию с обычным `BackHandler` и пустую iOS-реализацию.
+- [x] Создать для него собственный `rememberNavigationEventState`. Не использовать один state в нескольких обработчиках.
 - [ ] Включать обработчик только при открытой клавиатуре или несохранённых изменениях. При открытом подтверждении выходом управляет сам bottom sheet.
 - [ ] При завершённом Back с клавиатурой сначала скрывать клавиатуру и оставлять форму открытой.
 - [ ] При завершённом Back без клавиатуры отправлять существующий `BackClicked`.

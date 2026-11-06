@@ -56,6 +56,10 @@ fun MainMenuScreen() {
                                     navController = tasksNavController,
                                     startDestination = TasksRoute,
                                     modifier = Modifier.fillMaxSize(),
+                                    popEnterTransition = backEnterTransition,
+                                    popExitTransition = backExitTransition,
+                                    predictivePopEnterTransition = predictiveBackEnterTransition,
+                                    predictivePopExitTransition = predictiveBackExitTransition,
                                 ) {
                                     composable<TasksRoute> {
                                         TasksScreen()
@@ -68,6 +72,10 @@ fun MainMenuScreen() {
                                     navController = decksNavController,
                                     startDestination = DeckListRoute,
                                     modifier = Modifier.fillMaxSize(),
+                                    popEnterTransition = backEnterTransition,
+                                    popExitTransition = backExitTransition,
+                                    predictivePopEnterTransition = predictiveBackEnterTransition,
+                                    predictivePopExitTransition = predictiveBackExitTransition,
                                 ) {
                                     deckDestinations(decksNavController)
                                 }
@@ -78,6 +86,10 @@ fun MainMenuScreen() {
                                     navController = menuNavController,
                                     startDestination = MenuRoute,
                                     modifier = Modifier.fillMaxSize(),
+                                    popEnterTransition = backEnterTransition,
+                                    popExitTransition = backExitTransition,
+                                    predictivePopEnterTransition = predictiveBackEnterTransition,
+                                    predictivePopExitTransition = predictiveBackExitTransition,
                                 ) {
                                     menuDestinations(menuNavController)
                                 }
