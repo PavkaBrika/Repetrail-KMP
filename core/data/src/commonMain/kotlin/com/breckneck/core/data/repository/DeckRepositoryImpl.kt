@@ -18,6 +18,9 @@ class DeckRepositoryImpl(
         }
     }
 
+    override fun observeDeckById(id: Long): Flow<Deck?> =
+        deckDao.observeByIdWithCardCount(id).map { it?.toDomain() }
+
     override suspend fun getDeckById(id: Long): Deck? {
         val entity = deckDao.getById(id) ?: return null
         val cardCount = deckDao.getFlashcardCount(id)

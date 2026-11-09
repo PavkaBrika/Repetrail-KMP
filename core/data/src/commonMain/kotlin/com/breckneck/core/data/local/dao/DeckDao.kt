@@ -31,6 +31,15 @@ interface DeckDao {
     """)
     fun observeAllWithCardCount(): Flow<List<DeckWithCardCount>>
 
+    @Query("""
+        SELECT d.id, d.name, d.description, d.createdAt, d.updatedAt, COUNT(f.id) AS cardCount
+        FROM decks d
+        LEFT JOIN flashcards f ON d.id = f.deckId
+        WHERE d.id = :id
+        GROUP BY d.id
+    """)
+    fun observeByIdWithCardCount(id: Long): Flow<DeckWithCardCount?>
+
     @Query("DELETE FROM decks WHERE id = :id")
     suspend fun deleteById(id: Long)
 

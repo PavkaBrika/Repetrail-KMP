@@ -1,6 +1,6 @@
 package com.breckneck.core.domain.model
 
-data class Card(
+data class Flashcard(
     val id: Long = 0,
     val deckId: Long,
     val term: String,

@@ -14,7 +14,7 @@ kotlin {
         iosSimulatorArm64()
     )
     android {
-        namespace = "com.breckneck.feature.card"
+        namespace = "com.breckneck.feature.flashcard"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
         compilerOptions {

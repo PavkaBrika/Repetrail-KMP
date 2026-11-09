@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface DeckRepository {
     fun observeDecks(): Flow<List<Deck>>
+    fun observeDeckById(id: Long): Flow<Deck?>
     suspend fun getDeckById(id: Long): Deck?
     suspend fun saveDeck(deck: Deck): Long
     suspend fun deleteDeck(id: Long)

@@ -30,7 +30,7 @@ dependencyResolutionManagement {
 include(":androidApp")
 include(":shared")
 include(":feature:deck")
-include(":feature:card")
+include(":feature:flashcard")
 include(":core:ui:designsystem")
 include(":core:common")
 include(":core:domain")
