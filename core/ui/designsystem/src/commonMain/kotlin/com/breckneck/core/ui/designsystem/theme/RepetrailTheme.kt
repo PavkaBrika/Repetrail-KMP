@@ -62,6 +62,7 @@ fun RepetrailTheme(
             onSurface = colors.onSurface,
             surfaceVariant = colors.surfaceVariant,
             onSurfaceVariant = colors.onSurfaceVariant,
+            error = colors.error,
         )
     } else {
         lightColorScheme(
@@ -73,6 +74,7 @@ fun RepetrailTheme(
             onSurface = colors.onSurface,
             surfaceVariant = colors.surfaceVariant,
             onSurfaceVariant = colors.onSurfaceVariant,
+            error = colors.error,
         )
     }
 

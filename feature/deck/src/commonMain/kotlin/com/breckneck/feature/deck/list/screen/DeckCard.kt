@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.breckneck.core.domain.model.Deck
@@ -44,21 +45,22 @@ fun DeckCard(
     var showMenu by remember { mutableStateOf(false) }
 
     Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = { onDeckClick(deck.id) },
-                onLongClick = { showMenu = true },
-            ),
+        modifier = modifier.fillMaxWidth(),
         shape = RepetrailTheme.shapes.card,
         color = RepetrailTheme.colors.surface,
         shadowElevation = RepetrailTheme.dimensions.elevations.card,
     ) {
         Row(
-            modifier = Modifier.padding(
-                horizontal = RepetrailTheme.dimensions.spacings.medium,
-                vertical = RepetrailTheme.dimensions.spacings.medium,
-            ),
+            modifier = Modifier
+                .clip(RepetrailTheme.shapes.card)
+                .combinedClickable(
+                    onClick = { onDeckClick(deck.id) },
+                    onLongClick = { showMenu = true },
+                )
+                .padding(
+                    horizontal = RepetrailTheme.dimensions.spacings.medium,
+                    vertical = RepetrailTheme.dimensions.spacings.medium,
+                ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Surface(
@@ -126,7 +128,7 @@ fun DeckCard(
                             Text(
                                 text = stringResource(Res.string.deck_list_action_edit),
                                 style = RepetrailTheme.typography.bodyMedium,
-                                color = RepetrailTheme.colors.ink,
+                                color = RepetrailTheme.colors.accent,
                             )
                         },
                         onClick = {
@@ -140,7 +142,7 @@ fun DeckCard(
                             Text(
                                 text = stringResource(Res.string.deck_list_action_delete),
                                 style = RepetrailTheme.typography.bodyMedium,
-                                color = RepetrailTheme.colors.accent,
+                                color = RepetrailTheme.colors.error,
                             )
                         },
                         onClick = {

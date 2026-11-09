@@ -51,6 +51,7 @@ fun ColorTokensPreviewContent() {
         ColorSwatchItem("surface", colors.surface, colors.ink)
         ColorSwatchItem("surfaceVariant", colors.surfaceVariant, colors.ink)
         ColorSwatchItem("selectedTabBackground", colors.selectedTabBackground, colors.accent)
+        ColorSwatchItem("error", colors.error, Color.White)
     }
 }
 

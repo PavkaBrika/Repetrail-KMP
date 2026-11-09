@@ -15,6 +15,7 @@ data class RepetrailColors(
     val surface: Color,
     val surfaceVariant: Color,
     val selectedTabBackground: Color,
+    val error: Color = Color(0xFFE53935),
     val onPrimary: Color = Color.White,
     val onBackground: Color = ink,
     val onSurface: Color = ink,
@@ -31,6 +32,7 @@ fun lightRepetrailColors(
     surface: Color = Color.White,
     surfaceVariant: Color = Color(0xFFF0F1F7),
     selectedTabBackground: Color = Color(0xFFF0EFFF),
+    error: Color = Color(0xFFE53935),
 ): RepetrailColors = RepetrailColors(
     background = background,
     ink = ink,
@@ -41,6 +43,7 @@ fun lightRepetrailColors(
     surface = surface,
     surfaceVariant = surfaceVariant,
     selectedTabBackground = selectedTabBackground,
+    error = error,
 )
 
 fun darkRepetrailColors(
@@ -53,6 +56,7 @@ fun darkRepetrailColors(
     surface: Color = Color(0xFF1E2030),
     surfaceVariant: Color = Color(0xFF26293D),
     selectedTabBackground: Color = Color(0xFF2D2A5B),
+    error: Color = Color(0xFFFF6B6B),
 ): RepetrailColors = RepetrailColors(
     background = background,
     ink = ink,
@@ -63,6 +67,7 @@ fun darkRepetrailColors(
     surface = surface,
     surfaceVariant = surfaceVariant,
     selectedTabBackground = selectedTabBackground,
+    error = error,
     onPrimary = Color.White,
     onBackground = ink,
     onSurface = ink,
