@@ -49,6 +49,7 @@ kotlin {
             implementation(project(":core:domain"))
             implementation(project(":core:data"))
             implementation(project(":feature:deck"))
+            implementation(project(":feature:card"))
             implementation(libs.navigation.compose)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.compose.runtime)
