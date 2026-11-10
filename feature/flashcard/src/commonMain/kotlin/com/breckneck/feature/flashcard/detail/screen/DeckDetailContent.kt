@@ -106,7 +106,7 @@ internal fun DeckDetailContent(
             )
 
             is DeckDetailUiState.Empty -> DeckDetailEmpty(
-                state = state,
+                state = state.uiState,
                 listState = listState,
                 topPadding = topPadding,
                 bottomControlsPadding = bottomPadding,
@@ -115,7 +115,7 @@ internal fun DeckDetailContent(
             )
 
             is DeckDetailUiState.Content -> DeckDetailFlashcardList(
-                state = state,
+                state = state.uiState,
                 listState = listState,
                 topPadding = topPadding,
                 bottomControlsPadding = bottomPadding,
@@ -142,11 +142,16 @@ internal fun DeckDetailContent(
 
 @Composable
 private fun DeckDetailLoading(topPadding: Dp, bottomControlsPadding: Dp) {
+    val layoutDirection = LocalLayoutDirection.current
+    val safePadding = WindowInsets.safeDrawing.asPaddingValues()
+
     Column(
         modifier = Modifier.padding(
-            start = RepetrailTheme.dimensions.spacings.large,
+            start = RepetrailTheme.dimensions.spacings.large +
+                    safePadding.calculateStartPadding(layoutDirection),
             top = topPadding,
-            end = RepetrailTheme.dimensions.spacings.large,
+            end = RepetrailTheme.dimensions.spacings.large +
+                    safePadding.calculateEndPadding(layoutDirection),
             bottom = bottomControlsPadding,
         ),
         verticalArrangement = Arrangement.spacedBy(RepetrailTheme.dimensions.spacings.medium),
@@ -177,10 +182,16 @@ private fun DeckDetailMessage(
     actionLabel: String,
     onAction: () -> Unit,
 ) {
+    val layoutDirection = LocalLayoutDirection.current
+    val safePadding = WindowInsets.safeDrawing.asPaddingValues()
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = RepetrailTheme.dimensions.spacings.large),
+        modifier = Modifier.fillMaxSize().padding(
+            start = RepetrailTheme.dimensions.spacings.large +
+                    safePadding.calculateStartPadding(layoutDirection),
+            end = RepetrailTheme.dimensions.spacings.large +
+                    safePadding.calculateEndPadding(layoutDirection),
+        ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -201,7 +212,7 @@ private fun DeckDetailMessage(
 
 @Composable
 private fun DeckDetailEmpty(
-    state: DeckDetailState,
+    state: DeckDetailUiState.Empty,
     listState: LazyListState,
     topPadding: Dp,
     bottomControlsPadding: Dp,
@@ -209,9 +220,10 @@ private fun DeckDetailEmpty(
     onIntent: (DeckDetailIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val deck = state.deck ?: return
+    val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val safePadding = WindowInsets.safeDrawing.asPaddingValues()
+    var actionHeight by remember { mutableStateOf(0) }
 
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
@@ -225,12 +237,14 @@ private fun DeckDetailEmpty(
                 end = RepetrailTheme.dimensions.spacings.large + safePadding.calculateEndPadding(
                     layoutDirection
                 ),
-                bottom = bottomControlsPadding,
+                bottom = bottomControlsPadding +
+                        with(density) { actionHeight.toDp() } +
+                        RepetrailTheme.dimensions.spacings.large,
             ),
             verticalArrangement = Arrangement.spacedBy(RepetrailTheme.dimensions.spacings.medium),
         ) {
             item(key = "heading") {
-                DeckDetailHeading(deck = deck, flashcardCount = 0, titleProgress = titleProgress)
+                DeckDetailHeading(deck = state.deck, flashcardCount = 0, titleProgress = titleProgress)
             }
 
             item(key = "empty") {
@@ -248,7 +262,8 @@ private fun DeckDetailEmpty(
                     end = RepetrailTheme.dimensions.spacings.large +
                             safePadding.calculateEndPadding(layoutDirection),
                     bottom = bottomControlsPadding,
-                ),
+                )
+                .onSizeChanged { actionHeight = it.height },
             colors = ButtonDefaults.buttonColors(containerColor = RepetrailTheme.colors.accent),
             shape = RepetrailTheme.shapes.pill,
         ) {
@@ -259,7 +274,7 @@ private fun DeckDetailEmpty(
 
 @Composable
 private fun DeckDetailFlashcardList(
-    state: DeckDetailState,
+    state: DeckDetailUiState.Content,
     listState: LazyListState,
     topPadding: Dp,
     bottomControlsPadding: Dp,
@@ -267,17 +282,14 @@ private fun DeckDetailFlashcardList(
     onIntent: (DeckDetailIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val content = state.uiState as? DeckDetailUiState.Content ?: return
-    val deck = content.deck
-    val flashcards = content.flashcards
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val safePadding = WindowInsets.safeDrawing.asPaddingValues()
     var actionHeight by remember { mutableStateOf(0) }
     var expandedFlashcardId by remember { mutableStateOf<Long?>(null) }
 
-    LaunchedEffect(flashcards) {
-        if (flashcards.none { it.id == expandedFlashcardId }) {
+    LaunchedEffect(state.flashcards) {
+        if (state.flashcards.none { it.id == expandedFlashcardId }) {
             expandedFlashcardId = null
         }
     }
@@ -300,13 +312,13 @@ private fun DeckDetailFlashcardList(
         ) {
             item(key = "heading") {
                 DeckDetailHeading(
-                    deck = deck,
-                    flashcardCount = flashcards.size,
+                    deck = state.deck,
+                    flashcardCount = state.flashcards.size,
                     titleProgress = titleProgress,
                 )
             }
 
-            items(items = flashcards, key = { it.id }) { flashcard ->
+            items(items = state.flashcards, key = { it.id }) { flashcard ->
                 FlashcardListItem(
                     flashcard = flashcard,
                     menuExpanded = expandedFlashcardId == flashcard.id,
@@ -423,7 +435,6 @@ private fun DeckDetailTopControls(
 ) {
     val layoutDirection = LocalLayoutDirection.current
     val safePadding = WindowInsets.safeDrawing.asPaddingValues()
-    val deck = state.deck
 
     Row(
         modifier = modifier
@@ -457,7 +468,7 @@ private fun DeckDetailTopControls(
                 .padding(horizontal = RepetrailTheme.dimensions.spacings.small),
             contentAlignment = Alignment.Center
         ) {
-            if (deck != null && titleProgress > 0f) {
+            if (state.deck != null && titleProgress > 0f) {
                 Surface(
                     modifier = Modifier.alpha(titleProgress)
                         .semantics { if (titleProgress < 0.5f) hideFromAccessibility() },
@@ -466,7 +477,7 @@ private fun DeckDetailTopControls(
                     shadowElevation = RepetrailTheme.dimensions.elevations.floating,
                 ) {
                     Text(
-                        text = deck.name,
+                        text = state.deck?.name.orEmpty(),
                         modifier = Modifier.padding(
                             horizontal = RepetrailTheme.dimensions.spacings.medium,
                             vertical = RepetrailTheme.dimensions.spacings.small
@@ -479,7 +490,7 @@ private fun DeckDetailTopControls(
             }
         }
 
-        if (deck != null) {
+        if (state.deck != null) {
             Box {
                 val menuLabel = stringResource(Res.string.deck_detail_menu)
                 Surface(
@@ -515,7 +526,6 @@ private fun DeckDetailDeleteDialog(
     onIntent: (DeckDetailIntent) -> Unit,
 ) {
     val deck = state.deck ?: return
-    val flashcardCount = (state.uiState as? DeckDetailUiState.Content)?.flashcards?.size ?: 0
 
     ModalBottomSheet(
         onDismissRequest = { onIntent(DeckDetailIntent.CancelDeleteDeck) },
@@ -533,7 +543,11 @@ private fun DeckDetailDeleteDialog(
                 style = RepetrailTheme.typography.headingMedium
             )
             Text(
-                stringResource(Res.string.deck_detail_delete_message, deck.name, flashcardCount),
+                stringResource(
+                    Res.string.deck_detail_delete_message,
+                    deck.name,
+                    (state.uiState as? DeckDetailUiState.Content)?.flashcards?.size ?: 0,
+                ),
                 modifier = Modifier.padding(vertical = RepetrailTheme.dimensions.spacings.medium),
                 style = RepetrailTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
