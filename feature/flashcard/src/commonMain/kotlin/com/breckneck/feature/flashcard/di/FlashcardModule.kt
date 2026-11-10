@@ -5,6 +5,7 @@ import com.breckneck.core.domain.usecase.flashcard.GetFlashcardByIdUseCase
 import com.breckneck.core.domain.usecase.flashcard.ObserveFlashcardsUseCase
 import com.breckneck.core.domain.usecase.flashcard.SaveFlashcardUseCase
 import com.breckneck.feature.flashcard.detail.DeckDetailViewModel
+import com.breckneck.feature.flashcard.form.FlashcardFormViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -20,6 +21,13 @@ val flashcardModule = module {
             observeFlashcardsUseCase = get(),
             deleteDeckUseCase = get(),
             deleteFlashcardUseCase = get(),
+        )
+    }
+    viewModel {
+        FlashcardFormViewModel(
+            savedStateHandle = get(),
+            getFlashcardByIdUseCase = get(),
+            saveFlashcardUseCase = get(),
         )
     }
 }

@@ -357,13 +357,13 @@ Intents и их поведение:
 
 ### 4.9. Реализовать состояние и логику формы карточки
 
-- [ ] В CardFormViewModel прочитать deckId/cardId из SavedStateHandle.
-- [ ] Разделить состояние на `Loading`, `Content`, `LoadError`, `DeckNotFound`, `CardNotFound`; сохранение выразить флагом `isSaving` внутри Content.
-- [ ] В состоянии хранить term, definition, example как строки, исходные значения трёх полей, ошибки обязательных полей, ошибку сохранения и showDiscardDialog.
-- [ ] `isEditMode = cardId != null`.
-- [ ] `hasUnsavedChanges` вычислять для Content сравнением текущих строк с исходными; после загрузки и очистки формы это false. В Loading/LoadError/NotFound не включать перехват Back по dirty-состоянию.
-- [ ] `canSave` истинно только для Content, непустых после trim term/definition и отсутствия isSaving.
-- [ ] Пока Loading/LoadError/NotFound, не показывать редактируемую пустую форму с доступным сохранением.
+- [x] В CardFormViewModel прочитать deckId/cardId из SavedStateHandle.
+- [x] Разделить состояние на `Loading`, `Content`, `LoadError`, `DeckNotFound`, `CardNotFound`; сохранение выразить флагом `isSaving` внутри Content.
+- [x] В состоянии хранить term, definition, example как строки, исходные значения трёх полей, ошибки обязательных полей, ошибку сохранения и showDiscardDialog.
+- [x] `isEditMode = cardId != null`.
+- [x] `hasUnsavedChanges` вычислять для Content сравнением текущих строк с исходными; после загрузки и очистки формы это false. В Loading/LoadError/NotFound не включать перехват Back по dirty-состоянию.
+- [x] `canSave` истинно только для Content, непустых после trim term/definition и отсутствия isSaving.
+- [x] Пока Loading/LoadError/NotFound, не показывать редактируемую пустую форму с доступным сохранением.
 
 Загрузка:
 
