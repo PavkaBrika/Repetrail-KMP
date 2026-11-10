@@ -14,6 +14,7 @@ import com.breckneck.feature.deck.list.DeckListViewModel
 internal fun DecksScreen(
     viewModel: DeckListViewModel,
     onNavigateToDeckForm: (Long?) -> Unit,
+    onNavigateToDeckDetail: (Long) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -27,7 +28,7 @@ internal fun DecksScreen(
                     }
 
                     is DeckListSideEffect.NavigateToDeckDetail -> {
-                        // Will be wired to DeckDetailScreen in step 4
+                        onNavigateToDeckDetail(effect.deckId)
                     }
                 }
             }

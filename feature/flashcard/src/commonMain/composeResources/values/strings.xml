@@ -1,0 +1,23 @@
+<resources>
+    <string name="deck_detail_back">Back</string>
+    <string name="deck_detail_menu">Deck actions</string>
+    <string name="deck_detail_edit_deck">Edit deck</string>
+    <string name="deck_detail_delete_deck">Delete deck</string>
+    <string name="deck_detail_total">Total: %1$d</string>
+    <string name="deck_detail_new">New: %1$d</string>
+    <string name="deck_detail_empty">This deck has no flashcards yet</string>
+    <string name="deck_detail_add_first">Add first flashcard</string>
+    <string name="deck_detail_add">Add flashcard</string>
+    <string name="deck_detail_error">Could not load deck</string>
+    <string name="deck_detail_retry">Try again</string>
+    <string name="deck_detail_error_delete_deck">Could not delete deck</string>
+    <string name="deck_detail_error_delete_flashcard">Could not delete flashcard</string>
+    <string name="deck_detail_delete_title">Delete deck?</string>
+    <string name="deck_detail_delete_message">Deck “%1$s” and all its flashcards (%2$d) will be deleted. This cannot be undone.</string>
+    <string name="deck_detail_cancel">Cancel</string>
+    <string name="deck_detail_delete">Delete</string>
+    <string name="flashcard_action_edit">Edit</string>
+    <string name="flashcard_action_delete">Delete</string>
+    <string name="flashcard_actions">Flashcard actions</string>
+    <string name="flashcard_delete_accessibility">Delete flashcard</string>
+</resources>

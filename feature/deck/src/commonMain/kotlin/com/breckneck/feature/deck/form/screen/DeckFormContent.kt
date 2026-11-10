@@ -4,12 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -83,8 +80,7 @@ internal fun DeckFormContent(
                         start = RepetrailTheme.dimensions.spacings.large,
                         top = RepetrailTheme.dimensions.spacings.medium,
                         end = RepetrailTheme.dimensions.spacings.large,
-                        // 112.dp clearance above bottom navigation bar and floating action button area
-                        bottom = 112.dp + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
+                        bottom = RepetrailTheme.dimensions.spacings.large,
                     ),
                 verticalArrangement = Arrangement.spacedBy(RepetrailTheme.dimensions.spacings.medium),
             ) {

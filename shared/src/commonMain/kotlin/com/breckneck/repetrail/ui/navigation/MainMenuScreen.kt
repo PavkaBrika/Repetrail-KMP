@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,14 +27,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.breckneck.core.ui.designsystem.theme.RepetrailTheme
+import com.breckneck.feature.deck.navigation.DeckFormRoute
 import com.breckneck.feature.deck.navigation.DeckListRoute
+import com.breckneck.feature.flashcard.navigation.DeckDetailRoute
+import com.breckneck.feature.flashcard.navigation.flashcardDestinations
 import com.breckneck.feature.deck.navigation.deckDestinations
 import com.breckneck.repetrail.ui.components.FloatingNavigationBar
 import com.breckneck.repetrail.ui.screens.tasks.TasksScreen
@@ -52,6 +55,14 @@ fun MainMenuScreen() {
             .firstOrNull { it.name == selectedTabName }
             ?: MainTab.Tasks
         val saveableStateHolder = rememberSaveableStateHolder()
+        val tasksEntry by tasksNavController.currentBackStackEntryAsState()
+        val decksEntry by decksNavController.currentBackStackEntryAsState()
+        val menuEntry by menuNavController.currentBackStackEntryAsState()
+        val showBottomNavigation = when (selectedTab) {
+            MainTab.Tasks -> tasksEntry?.destination?.hasRoute<TasksRoute>() ?: true
+            MainTab.Decks -> decksEntry?.destination?.hasRoute<DeckListRoute>() ?: true
+            MainTab.Menu -> menuEntry?.destination?.hasRoute<MenuRoute>() ?: true
+        }
 
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -90,7 +101,19 @@ fun MainMenuScreen() {
                                 predictivePopEnterTransition = predictiveBackEnterTransition,
                                 predictivePopExitTransition = predictiveBackExitTransition,
                             ) {
-                                deckDestinations(decksNavController)
+                                deckDestinations(
+                                    navController = decksNavController,
+                                    onNavigateToDeckDetail = { deckId ->
+                                        decksNavController.navigate(DeckDetailRoute(deckId)) { launchSingleTop = true }
+                                    },
+                                )
+                                flashcardDestinations(
+                                    navController = decksNavController,
+                                    onEditDeck = { deckId ->
+                                        decksNavController.navigate(DeckFormRoute(deckId)) { launchSingleTop = true }
+                                    },
+                                    onNavigateToDeckList = { decksNavController.popBackStack(DeckListRoute, inclusive = false) },
+                                )
                             }
                         }
 
@@ -112,18 +135,20 @@ fun MainMenuScreen() {
                     }
                 }
 
-                FloatingNavigationBar(
-                    selectedTab = selectedTab,
-                    onTabSelected = { tab ->
-                        if (tab != selectedTab) {
-                            selectedTabName = tab.name
-                        }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .windowInsetsPadding(WindowInsets.navigationBars)
-                        .padding(horizontal = 18.dp, vertical = 10.dp),
-                )
+                if (showBottomNavigation) {
+                    FloatingNavigationBar(
+                        selectedTab = selectedTab,
+                        onTabSelected = { tab ->
+                            if (tab != selectedTab) {
+                                selectedTabName = tab.name
+                            }
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .windowInsetsPadding(WindowInsets.navigationBars)
+                            .padding(horizontal = 18.dp, vertical = 10.dp),
+                    )
+                }
 
                 Box(
                     modifier = Modifier

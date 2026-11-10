@@ -9,7 +9,10 @@ import com.breckneck.feature.deck.list.DeckListViewModel
 import com.breckneck.feature.deck.list.screen.DecksScreen
 import org.koin.compose.viewmodel.koinViewModel
 
-fun NavGraphBuilder.deckDestinations(navController: NavHostController) {
+fun NavGraphBuilder.deckDestinations(
+    navController: NavHostController,
+    onNavigateToDeckDetail: (Long) -> Unit,
+) {
     composable<DeckListRoute> { entry ->
         val viewModel = koinViewModel<DeckListViewModel>(
             viewModelStoreOwner = entry,
@@ -18,6 +21,7 @@ fun NavGraphBuilder.deckDestinations(navController: NavHostController) {
 
         DecksScreen(
             viewModel = viewModel,
+            onNavigateToDeckDetail = onNavigateToDeckDetail,
             onNavigateToDeckForm = { deckId ->
                 val route = when (deckId) {
                     null -> DeckFormRoute()

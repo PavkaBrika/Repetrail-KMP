@@ -1,0 +1,23 @@
+<resources>
+    <string name="deck_detail_back">Назад</string>
+    <string name="deck_detail_menu">Действия с колодой</string>
+    <string name="deck_detail_edit_deck">Редактировать колоду</string>
+    <string name="deck_detail_delete_deck">Удалить колоду</string>
+    <string name="deck_detail_total">Всего: %1$d</string>
+    <string name="deck_detail_new">Новые: %1$d</string>
+    <string name="deck_detail_empty">В этой колоде пока нет карточек</string>
+    <string name="deck_detail_add_first">Добавить первую карточку</string>
+    <string name="deck_detail_add">Добавить карточку</string>
+    <string name="deck_detail_error">Не удалось загрузить колоду</string>
+    <string name="deck_detail_retry">Повторить</string>
+    <string name="deck_detail_error_delete_deck">Не удалось удалить колоду</string>
+    <string name="deck_detail_error_delete_flashcard">Не удалось удалить карточку</string>
+    <string name="deck_detail_delete_title">Удалить колоду?</string>
+    <string name="deck_detail_delete_message">Колода «%1$s» и все её карточки (%2$d) будут удалены. Это нельзя отменить.</string>
+    <string name="deck_detail_cancel">Отмена</string>
+    <string name="deck_detail_delete">Удалить</string>
+    <string name="flashcard_action_edit">Редактировать</string>
+    <string name="flashcard_action_delete">Удалить</string>
+    <string name="flashcard_actions">Действия карточки</string>
+    <string name="flashcard_delete_accessibility">Удалить карточку</string>
+</resources>

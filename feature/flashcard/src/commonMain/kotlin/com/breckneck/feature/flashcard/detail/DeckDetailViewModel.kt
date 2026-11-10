@@ -9,7 +9,6 @@ import com.breckneck.core.domain.usecase.deck.ObserveDeckByIdUseCase
 import com.breckneck.core.domain.usecase.flashcard.DeleteFlashcardUseCase
 import com.breckneck.core.domain.usecase.flashcard.ObserveFlashcardsUseCase
 import com.breckneck.feature.flashcard.navigation.DeckDetailRoute
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -79,66 +78,35 @@ class DeckDetailViewModel(
 
     private fun observeDeck() {
         observeJob?.cancel()
-        mutableState.update { it.copy(uiState = DeckDetailUiState.Loading) }
         observeJob = viewModelScope.launch {
-            try {
-                combine(
-                    observeDeckByIdUseCase(deckId),
-                    observeFlashcardsUseCase(deckId)
-                ) { deck, flashcards ->
-                    deck to flashcards
-                }.collect { (deck, flashcards) ->
-                    val uiState = if (deck != null) {
-                        DeckDetailUiState.Content(deck, flashcards)
-                    } else {
-                        DeckDetailUiState.NotFound
-                    }
-                    mutableState.update { it.copy(uiState = uiState) }
+            combine(
+                observeDeckByIdUseCase(deckId),
+                observeFlashcardsUseCase(deckId),
+            ) { deck, flashcards ->
+                deck to flashcards
+            }.collect { (deck, flashcards) ->
+                val currentDeck = deck ?: return@collect
+                val uiState = if (flashcards.isEmpty()) {
+                    DeckDetailUiState.Empty(currentDeck)
+                } else {
+                    DeckDetailUiState.Content(currentDeck, flashcards)
                 }
-            } catch (exception: CancellationException) {
-                throw exception
-            } catch (_: Exception) {
-                mutableState.update { it.copy(uiState = DeckDetailUiState.Error) }
+                mutableState.update { it.copy(uiState = uiState) }
             }
         }
     }
 
     private fun deleteFlashcard(flashcardId: Long) {
-        if (state.value.isMutating) return
-
-        mutableState.update { it.copy(isMutating = true, operationError = null) }
         viewModelScope.launch {
-            try {
-                deleteFlashcardUseCase(deckId, flashcardId)
-            } catch (exception: CancellationException) {
-                throw exception
-            } catch (_: Exception) {
-                mutableState.update { it.copy(operationError = DeckDetailOperationError.DeleteFlashcard) }
-            } finally {
-                mutableState.update { it.copy(isMutating = false) }
-            }
+            deleteFlashcardUseCase(deckId, flashcardId)
         }
     }
 
     private fun deleteDeck() {
-        if (state.value.isMutating) return
-        mutableState.update {
-            it.copy(showDeleteDeckDialog = false, isMutating = true, operationError = null)
-        }
+        mutableState.update { it.copy(showDeleteDeckDialog = false) }
         viewModelScope.launch {
-            try {
-                deleteDeckUseCase(deckId)
-                effects.trySend(DeckDetailSideEffect.NavigateToDeckList)
-            } catch (exception: CancellationException) {
-                throw exception
-            } catch (_: Exception) {
-                mutableState.update {
-                    it.copy(
-                        isMutating = false,
-                        operationError = DeckDetailOperationError.DeleteDeck
-                    )
-                }
-            }
+            deleteDeckUseCase(deckId)
+            effects.trySend(DeckDetailSideEffect.NavigateToDeckList)
         }
     }
 }
