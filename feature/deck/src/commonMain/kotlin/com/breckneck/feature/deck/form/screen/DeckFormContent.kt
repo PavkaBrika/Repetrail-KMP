@@ -17,11 +17,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import com.breckneck.core.ui.designsystem.components.RepetrailTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -104,7 +103,7 @@ internal fun DeckFormContent(
 
                 Spacer(Modifier.height(RepetrailTheme.dimensions.spacings.small))
 
-                OutlinedTextField(
+                RepetrailTextField(
                     value = state.name,
                     onValueChange = { name ->
                         if (name.length <= MAX_NAME_LENGTH) {
@@ -125,17 +124,9 @@ internal fun DeckFormContent(
                         }
                     },
                     singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = RepetrailTheme.colors.accent,
-                        unfocusedBorderColor = RepetrailTheme.colors.surfaceVariant,
-                        focusedLabelColor = RepetrailTheme.colors.accent,
-                        unfocusedLabelColor = RepetrailTheme.colors.muted,
-                        focusedTextColor = RepetrailTheme.colors.ink,
-                        unfocusedTextColor = RepetrailTheme.colors.ink,
-                    ),
                 )
 
-                OutlinedTextField(
+                RepetrailTextField(
                     value = state.description,
                     onValueChange = { description ->
                         if (description.length <= MAX_DESCRIPTION_LENGTH) {
@@ -147,14 +138,6 @@ internal fun DeckFormContent(
                     placeholder = { Text(stringResource(Res.string.deck_form_description_placeholder)) },
                     minLines = 3,
                     maxLines = 5,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = RepetrailTheme.colors.accent,
-                        unfocusedBorderColor = RepetrailTheme.colors.surfaceVariant,
-                        focusedLabelColor = RepetrailTheme.colors.accent,
-                        unfocusedLabelColor = RepetrailTheme.colors.muted,
-                        focusedTextColor = RepetrailTheme.colors.ink,
-                        unfocusedTextColor = RepetrailTheme.colors.ink,
-                    ),
                 )
 
                 Spacer(Modifier.height(RepetrailTheme.dimensions.spacings.large))

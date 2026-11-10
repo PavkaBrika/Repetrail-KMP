@@ -30,6 +30,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,7 +68,7 @@ import repetrail.feature.flashcard.generated.resources.*
 internal fun DeckDetailContent(
     state: DeckDetailState,
     onIntent: (DeckDetailIntent) -> Unit,
-    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState? = null,
 ) {
     val listState = rememberLazyListState()
 
@@ -94,7 +96,7 @@ internal fun DeckDetailContent(
     }
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(RepetrailTheme.colors.background)
     ) {
@@ -135,6 +137,19 @@ internal fun DeckDetailContent(
             DeckDetailDeleteDialog(
                 state = state,
                 onIntent = onIntent,
+            )
+        }
+
+        if (snackbarHostState != null) {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(
+                        bottom = bottomPadding +
+                            RepetrailTheme.dimensions.iconSizes.large +
+                            RepetrailTheme.dimensions.spacings.medium,
+                    ),
             )
         }
     }
