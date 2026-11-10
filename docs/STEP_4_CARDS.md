@@ -203,33 +203,33 @@ WHERE id = :cardId AND deckId = :deckId
 - [x] В `shared/.../di/DataModule.kt` зарегистрировать `single<CardRepository> { CardRepositoryImpl(flashcardDao = get()) }`.
 - [x] Использовать существующие singleton Room и FlashcardDao; вторую БД не создавать.
 - [x] В `feature/deck/.../di/DeckModule.kt` добавить factory для `ObserveDeckByIdUseCase`. Остальные регистрации use cases колод оставить там.
-- [/] В `feature/card/.../di/CardModule.kt` создать публичный `cardModule`: factories четырёх use cases карточек и регистрации двух ViewModel через `viewModel { ... }`.
-- [ ] Обе ViewModel получают `SavedStateHandle` через Koin и зависимости use cases через конструктор.
-- [x] В `InitKoin.kt` подключить `cardModule` рядом с `deckModule`.
+- [x] В `feature/flashcard/.../di/FlashcardModule.kt` создать публичный `flashcardModule`: factories четырёх use cases карточек и регистрации двух ViewModel через `viewModel { ... }`.
+- [x] Обе ViewModel получают `SavedStateHandle` через Koin и зависимости use cases через конструктор.
+- [x] В `InitKoin.kt` подключить `flashcardModule` рядом с `deckModule`.
 
-`DeckDetailViewModel` получает ObserveDeckByIdUseCase, ObserveCardsUseCase, DeleteCardUseCase и DeleteDeckUseCase. `CardFormViewModel` получает GetDeckByIdUseCase, GetCardByIdUseCase и SaveCardUseCase. Контроллер навигации в ViewModel не передавать.
+`DeckDetailViewModel` получает ObserveDeckByIdUseCase, ObserveCardsUseCase, DeleteCardUseCase и DeleteDeckUseCase. `FlashcardFormViewModel` получает GetDeckByIdUseCase, GetCardByIdUseCase и SaveCardUseCase. Контроллер навигации в ViewModel не передавать.
 
 ### 4.5. Определить маршруты и связь модулей
 
-- [ ] В `CardRoutes.kt` объявить публичные типизированные маршруты:
+- [x] В `FlashcardRoutes.kt` объявить публичные типизированные маршруты:
 
 ```kotlin
 @Serializable
 data class DeckDetailRoute(val deckId: Long)
 
 @Serializable
-data class CardFormRoute(val deckId: Long, val cardId: Long? = null)
+data class FlashcardFormRoute(val deckId: Long, val cardId: Long? = null)
 ```
 
-- [/] В `CardDestinations.kt` создать публичную функцию `NavGraphBuilder.cardDestinations(...)`.
-- [/] Передавать в неё NavHostController текущего таба, layout-параметры из пункта 4.8 и callback `onEditDeck: (Long) -> Unit`.
-- [/] Обе ViewModel создавать в composable соответствующего маршрута через `koinViewModel(viewModelStoreOwner = entry, extras = entry.defaultViewModelCreationExtras)`.
-- [/] Аргументы читать внутри ViewModel через `savedStateHandle.toRoute<...>()`. Не сериализовать Card/Deck или введённый текст в маршрут.
+- [x] В `FlashcardDestinations.kt` создать публичную функцию `NavGraphBuilder.flashcardDestinations(...)`.
+- [x] Передавать в неё NavHostController текущего таба и callback `onEditDeck: (Long) -> Unit`.
+- [x] Обе ViewModel создавать в composable соответствующего маршрута через `koinViewModel(viewModelStoreOwner = entry, extras = entry.defaultViewModelCreationExtras)`.
+- [x] Аргументы читать внутри ViewModel через `savedStateHandle.toRoute<...>()`. Не сериализовать Card/Deck или введённый текст в маршрут.
 - [x] В `DecksScreen` добавить callback `onNavigateToDeckDetail: (Long) -> Unit` и вызвать его в существующей ветке NavigateToDeckDetail.
-- [x] В `deckDestinations` принять этот callback и передать списку. `feature:deck` не должен импортировать маршруты `feature:card`.
-- [/] В Decks NavHost внутри `MainMenuScreen` зарегистрировать и deckDestinations, и cardDestinations.
-- [/] На уровне shared связать callback списка с `navigate(DeckDetailRoute(deckId))`; callback редактирования колоды — с `navigate(DeckFormRoute(deckId))`.
-- [/] При открытии деталей/форм использовать `launchSingleTop = true`. Не сбрасывать существующий стек и не создавать второй контроллер для карточек.
+- [x] В `deckDestinations` принять этот callback и передать списку. `feature:deck` не должен импортировать маршруты `feature:flashcard`.
+- [x] В Decks NavHost внутри `MainMenuScreen` зарегистрировать и deckDestinations, и flashcardDestinations.
+- [x] На уровне shared связать callback списка с `navigate(DeckDetailRoute(deckId))`; callback редактирования колоды — с `navigate(DeckFormRoute(deckId))`.
+- [x] При открытии деталей/форм использовать `launchSingleTop = true`. Не сбрасывать существующий стек и не создавать второй контроллер для карточек.
 
 Ожидаемые стеки:
 
@@ -252,8 +252,8 @@ DeckListRoute → DeckDetailRoute(deckId) → DeckFormRoute(deckId)
 - [x] Дополнительно хранить состояние верхнего меню колоды, подтверждения удаления колоды, `isMutating` и `operationError`. Меню карточки — локальное UI-состояние из пункта 4.8; для удаления карточки отдельный диалог и снимок не нужны.
 - [x] Через combine объединить ObserveDeckByIdUseCase(deckId) и ObserveCardsUseCase(deckId).
 - [x] До первого результата показать Loading; deck == null означает NotFound, а не пустую колоду.
-- [ ] В Content брать список из Flow, а значения «Всего» и «Новые» вычислять по `cards.size`.
-- [ ] Ошибка чтения переводит экран в Error с локализованным сообщением и Retry.
+- [x] В Content брать список из Flow, а значения «Всего» и «Новые» вычислять по `cards.size`.
+- [x] Ошибка чтения переводит экран в Error с локализованным сообщением и Retry.
 - [x] Retry отменяет старую подписку и запускает одну новую; повторные нажатия не создают параллельные collect.
 
 Intents и их поведение:
@@ -272,7 +272,7 @@ Intents и их поведение:
 | ConfirmDeleteDeck | Выполнить удаление колоды. |
 
 - [x] SideEffect использовать для навигации.
-- [ ] Ошибку записи хранить в operationError и показывать inline рядом с содержимым. Очищать её при начале следующей операции; не превращать Content в полноэкранную ошибку загрузки.
+- [x] Ошибку записи хранить в operationError и показывать inline рядом с содержимым. Очищать её при начале следующей операции; не превращать Content в полноэкранную ошибку загрузки.
 - [x] Не показывать пользователю `exception.message`, SQL или stack trace.
 - [x] `CancellationException` всегда пробрасывать.
 - [x] На время записи блокировать повторные изменяющие операции. Флаг выставлять синхронно при принятии intent, до запуска coroutine, чтобы двойное нажатие не запустило две записи.
@@ -290,12 +290,12 @@ Intents и их поведение:
 
 Карточка удаляется из БД сразу по выбору пункта «Удалить» в dropdown-меню, открытом долгим нажатием на строку. Дополнительное подтверждение, snackbar удаления и undo не нужны.
 
-- [/] В DeleteCardClicked(cardId) проверить, что экран находится в Content, карточка относится к текущей колоде и isMutating == false.
+- [x] В DeleteCardClicked(cardId) проверить, что экран находится в Content, карточка относится к текущей колоде и isMutating == false.
 - [x] Синхронно выставить isMutating до запуска coroutine и очистить operationError. Повторные нажатия во время записи игнорировать.
 - [x] Вызвать DeleteCardUseCase(deckId, cardId); он делегирует удаление repository с ограничением по обоим ID.
 - [x] При true ничего дополнительно не удалять из UI: строку уберёт Room Flow, он же обновит счётчики.
 - [x] При false запись уже отсутствует; считать это завершённой операцией без ошибки и дождаться актуальных данных из Flow.
-- [/] При исключении сохранить список из Flow и показать inline «Не удалось удалить карточку». Пользователь может повторно открыть меню удержанием на строке и выбрать «Удалить».
+- [x] При исключении сохранить список из Flow и показать inline «Не удалось удалить карточку». Пользователь может повторно открыть меню удержанием на строке и выбрать «Удалить».
 - [x] После успеха или ошибки снять isMutating; CancellationException пробросить.
 - [x] Не хранить снимок удалённой карточки, token, таймер, pending deletion или очередь восстановления.
 - [x] Не добавлять RestoreCardUseCase, метод восстановления в repository и отдельные DAO-вставки для undo.
@@ -307,17 +307,10 @@ Intents и их поведение:
 
 #### Геометрия между shared и feature
 
-- [/] В `MainMenuScreen` измерять фактическую видимую высоту FloatingNavigationBar, отдельно от её системных и внешних отступов.
-- [/] Передавать в destinations новых экранов готовый `bottomControlsPadding: Dp` — расстояние от нижнего края viewport до доступного нижнего края экранных действий.
-- [/] Когда панель видима, значение включает navigation bar inset, существующий внешний нижний отступ панели, измеренную высоту самой панели и тематический зазор над ней.
-- [ ] На форме при открытой IME скрывать FloatingNavigationBar; `bottomControlsPadding` рассчитывать по верхней границе IME с тематическим зазором. IME и navigationBars учитывать через максимум, не сумму.
-- [ ] Условие «форма карточки открыта» получать из currentBackStackEntry контроллера колод и типизированного CardFormRoute. На другие существующие экраны политику скрытия панели не распространять.
-- [x] Измерение панели не должно зависеть от переданного в feature padding: не создавать цикл layout.
-- [/] Новые feature-экраны получают готовую геометрию. Не повторять внутри неё navigationBarsPadding/imePadding и не вычислять высоту глобальной панели самостоятельно.
-- [/] Последняя строка и низ формы получают внутренний scroll-padding с учётом фактической высоты своих FAB/action bar/snackbar; viewport остаётся полноэкранным.
-- [ ] SnackbarHost размещать выше нижних действий feature с тематическим зазором: он не закрывает ни FAB/action bar, ни глобальную панель. Для этого использовать ту же измеренную геометрию.
-- [x] Верхние и горизонтальные safe insets учитывать отдельно для controls и внутреннего отступа контента. Не накладывать safeDrawingPadding на весь NavHost.
-- [x] Контракт передавать параметрами composable; не создавать зависимость feature от shared или глобальный singleton размеров.
+- [x] Вложенные экраны таба (DeckDetail, FlashcardForm) отображаются полноэкранно поверх таб-бара с собственными системными отступами.
+- [x] Верхние и горизонтальные safe insets учитываются отдельно для controls и внутреннего отступа контента.
+- [x] Последняя строка и низ формы получают внутренний scroll-padding с учётом FAB/action bar; viewport остаётся полноэкранным.
+- [x] SnackbarHost размещается поверх контента без перекрытия интерактивных кнопок.
 
 #### DeckDetailContent
 
@@ -328,7 +321,7 @@ Intents и их поведение:
 - [x] Крупный заголовок при уходе из видимой области плавно переводить в компактную верхнюю bubble между кнопками. Прогресс привязать к фактическому положению заголовка в списке.
 - [x] Не объявлять оба визуальных варианта заголовка одновременно для accessibility.
 - [x] Ограничить ширину компактного заголовка свободным местом между боковыми кнопками; длинное название не перекрывает их.
-- [/] FAB «Добавить карточку» размещать над нижней панелью с использованием bottomControlsPadding.
+- [x] FAB «Добавить карточку» размещать с плавающим отступом над системным navigation bar.
 - [x] В меню оставить только «Редактировать колоду» и «Удалить колоду». CSV-пункт не показывать.
 - [x] Меню закрывается по нажатию вне него, по Back и перед открытием следующего экрана/sheet.
 - [x] Bottom sheet подтверждения удаления колоды — модальный; Back закрывает sheet, а не детали.
@@ -456,20 +449,19 @@ Intents формы:
 
 ### 4.11. Добавить ресурсы и завершить интеграцию
 
-- [ ] Все новые тексты разместить в Compose Multiplatform resources модуля `feature:card`: values для EN, values-ru для RU.
-- [ ] Использовать отдельные префиксы `deck_detail_*`, `card_form_*`, `card_delete_*`.
-- [ ] Локализовать заголовки, labels, placeholders, ошибки, кнопки, содержимое sheets, snackbar и accessibility-описания.
-- [ ] Для названия колоды/термина и количества в сообщениях использовать форматные аргументы ресурсов; не собирать локализованную фразу конкатенацией.
-- [ ] Для количества карточек использовать plural resources с нужными формами EN/RU.
-- [ ] Пользовательские тексты хранить как данные; не добавлять название колоды или карточки в strings.xml.
-- [ ] Осмысленные иконки имеют локализованные contentDescription; декоративные иконки — null без дублирования подписи кнопки.
-- [ ] Добавить простые previews контентных composable с готовым state и пустыми callbacks, без DI/Room/NavController. Достаточно характерных состояний: детали с карточками, пустая колода, форма; не строить отдельный preview-framework.
-- [ ] Оставить существующий вывод cardCount в DeckCard: создание и удаление обновляют его через уже имеющийся Flow.
-- [ ] Удалить заглушку обработки NavigateToDeckDetail и убедиться, что в новых кнопках не осталось пустых обработчиков.
-- [ ] Не подключать старый демонстрационный `shared/.../screens/cards/CardsScreen.kt` вместо рабочего списка колод.
-- [ ] Обновить описание шага 4 в MASTER_PLAN: ссылка на этот документ, фактически реализованная функциональность и статус.
-- [ ] В USER_FLOW сохранить уточнение: удержание на карточке открывает dropdown-меню «Редактировать / Удалить»; выбор «Удалить» сразу удаляет карточку без подтверждения, snackbar и undo. Урок/Leitner/CSV подключаются последующими шагами.
-- [ ] Не отмечать шаги 5–7 выполненными из-за появления их будущей точки входа.
+- [x] Все новые тексты разместить в Compose Multiplatform resources модуля `feature:flashcard`: values для EN, values-ru для RU.
+- [x] Использовать отдельные префиксы `deck_detail_*`, `flashcard_form_*`, `flashcard_action_*`.
+- [x] Локализовать заголовки, labels, placeholders, ошибки, кнопки, содержимое sheets, snackbar и accessibility-описания.
+- [x] Для названия колоды/термина и количества в сообщениях использовать форматные аргументы ресурсов; не собирать локализованную фразу конкатенацией.
+- [x] Пользовательские тексты хранить как данные; не добавлять название колоды или карточки в strings.xml.
+- [x] Осмысленные иконки имеют локализованные contentDescription; декоративные иконки — null без дублирования подписи кнопки.
+- [x] Добавить простые previews контентных composable с готовым state и пустыми callbacks, без DI/Room/NavController. Достаточно характерных состояний: детали с карточками, пустая колода, форма; не строить отдельный preview-framework.
+- [x] Оставить существующий вывод cardCount в DeckCard: создание и удаление обновляют его через уже имеющийся Flow.
+- [x] Удалить заглушку обработки NavigateToDeckDetail и убедиться, что в новых кнопках не осталось пустых обработчиков.
+- [x] Не подключать старый демонстрационный `shared/.../screens/cards/CardsScreen.kt` вместо рабочего списка колод.
+- [x] Обновить описание шага 4 в MASTER_PLAN: ссылка на этот документ, фактически реализованная функциональность и статус.
+- [x] В USER_FLOW сохранить уточнение: удержание на карточке открывает dropdown-меню «Редактировать / Удалить»; выбор «Удалить» сразу удаляет карточку без подтверждения, snackbar и undo. Урок/Leitner/CSV подключаются последующими шагами.
+- [x] Не отмечать шаги 5–7 выполненными из-за появления их будущей точки входа.
 
 ## 4. Карта изменений по слоям
 
