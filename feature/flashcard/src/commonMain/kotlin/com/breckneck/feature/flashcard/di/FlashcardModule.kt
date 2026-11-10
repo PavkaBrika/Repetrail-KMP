@@ -19,6 +19,7 @@ val flashcardModule = module {
             observeDeckByIdUseCase = get(),
             observeFlashcardsUseCase = get(),
             deleteDeckUseCase = get(),
+            deleteFlashcardUseCase = get(),
         )
     }
 }

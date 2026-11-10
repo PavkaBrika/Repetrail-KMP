@@ -12,6 +12,7 @@ sealed interface DeckDetailUiState {
 
 enum class DeckDetailOperationError {
     DeleteDeck,
+    DeleteFlashcard,
 }
 
 data class DeckDetailState(

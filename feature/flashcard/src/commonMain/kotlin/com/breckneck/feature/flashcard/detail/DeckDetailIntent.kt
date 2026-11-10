@@ -5,6 +5,7 @@ sealed interface DeckDetailIntent {
     data object BackClicked : DeckDetailIntent
     data object AddFlashcardClicked : DeckDetailIntent
     data class FlashcardClicked(val flashcardId: Long) : DeckDetailIntent
+    data class DeleteFlashcardClicked(val flashcardId: Long) : DeckDetailIntent
     data object OpenMenu : DeckDetailIntent
     data object DismissMenu : DeckDetailIntent
     data object EditDeckClicked : DeckDetailIntent
